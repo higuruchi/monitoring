@@ -1,0 +1,98 @@
+body {
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    height: 200px;
+    background-color: aquamarine;
+}
+
+input[type="text"] {
+    width: 200px; 
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 10px; 
+    border: 2px solid #ddd;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus {
+    border: 2px solid rgb(115, 115, 199); 
+    z-index: 10;
+    outline: 0;
+}
+button {
+    display: inline-block;
+    max-width: 180px;
+    text-align: left;
+    border: 2px solid #9ec34b;
+    font-size: 16px;
+    color: #9ec34b;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: .4s;
+}
+button:hover {
+    background-color: #9ec34b;
+    border-color: #cbe585;
+    color: #FFF;
+
+}
+
+input[type="datetime-local"] {
+    border-radius: 10px; 
+    border: 2px solid #ddd;
+    height: 40px; 
+}
+
+.middle {
+    flex: 1;
+    display: flex;
+}
+
+.main {
+    box-shadow: 1px 1px 5px 1px #999;
+}
+
+.main h2 {
+    background-color: chartreuse;
+    text-align: center;
+} 
+
+.use_now {
+    background-color: chartreuse;
+    text-align: center;
+}
+
+.time {
+    font-size: 10px;
+    color: gray;
+}
+
+left {
+    width: 300px;
+    max-height: 500px;
+    overflow-y:scroll;
+}
+
+left::-webkit-scrollbar {
+    display: none;
+}
+
+.main {
+    flex: 1;
+}
+
+right {
+    width: 300px;
+}
+
+footer {
+    height: 100px;
+    background-color: aquamarine;
+}
