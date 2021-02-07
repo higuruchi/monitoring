@@ -11,7 +11,7 @@ jQuery(function($) {
         if ((from.val() != '' && to.val() != '') || search_condition.val() != '') {
 
             if (search_condition != '') {
-                if (search_condition.val().match('[0-9]{2}[A-Z][0-9]{3}')) {
+                if (search_condition.val().match('^[0-9a-fA-F]{16}$')) {
                     idm = search_condition.val();
                 } else {
                     name = search_condition.val();
