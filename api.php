@@ -67,7 +67,7 @@ function add_user($dbh, string $idm, string $name) {
 // logテーブルのログを更新する
 function update_log($dbh, string $idm, string $name) {
 
-    if (check_user($dbh, $idm) == false) {
+    if (check_user($dbh, $idm) === false) {
         add_user($dbh, $idm, $name);
     }
 
@@ -123,22 +123,19 @@ function update_log($dbh, string $idm, string $name) {
 function search_log(string $idm, string $name, string $from, string $to) {
     $sql = 'SELECT * FROM log INNER JOIN user ON log.user_id=user.id WHERE ';
 
-    if ($idm != '') {
+    if ($idm !== '') {
         $sql = $sql.'idm=? ';
         $data[] = $idm;
-    } else if ($name != '') {
+    } else if ($name !== '') {
         $sql = $sql.'name=? ';
         $data[] = $name;
     }
 
-    if (($idm != '' || $name != '') && ($from != '' && $to != '')) {
-        $sql = $sql.'AND enter_time BETWEEN ? AND ? OR exit_time BETWEEN ? AND ?';
-        $data[] = $from;
-        $data[] = $to;
-        $data[] = $from;
-        $data[] = $to;
-    } else if ($from != '' && $to != '') {
-        $sql = $sql.'enter_time BETWEEN ? AND ? OR exit_time BETWEEN ? AND ?';
+    if (($idm !== '' || $name !== '') && ($from !== '' && $to !== '')) {
+        $sql = $sql.'AND ';
+    }
+    if ($from !== '' && $to !== '') {
+        $sql = $sql.'(enter_time BETWEEN ? AND ? OR exit_time BETWEEN ? AND ?)';
         $data[] = $from;
         $data[] = $to;
         $data[] = $from;
@@ -165,13 +162,13 @@ function search_log(string $idm, string $name, string $from, string $to) {
 }
 
 // 送られてくるデータによって処理を分岐する
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $arr = json_decode(file_get_contents('php://input'), true);
 
     $idm = $arr['idm'];
     $name = $arr['name'];
 
-    if ($name == false) {
+    if (is_null($name)) {
         $name = 'guest';
     }
     
@@ -189,10 +186,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     echo json_encode($retarr);
 
-} else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     header('Content-Type: application/json; charset=UTF-8');
 
-    if ($_GET['command'] == 'search') {
+    if ($_GET['command'] === 'search') {
 
         $from = h($_GET['from']);
         $to = h($_GET['to']);
@@ -201,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         echo json_encode(search_log($idm, $name, $from, $to));
 
-    } else if ($_GET['command'] == 'use_now') {
+    } else if ($_GET['command'] === 'use_now') {
         echo json_encode(use_now());
     }
 }
