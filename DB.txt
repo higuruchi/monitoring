@@ -1,21 +1,21 @@
 CREATE TABLE user (
     id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    idm VARCHAR(16) NOT NULL,
-    name VARCHAR(20)
+    idm VARCHAR(16) NOT NULL UNIQUE,
+    name VARCHAR(20) NOT NULL
 )CHARSET=utf8;
 
 CREATE TABLE log(
-    log_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     user_id INT UNSIGNED NOT NULL,
-    enter_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    enter_time DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     exit_time DATETIME DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id) 
+    FOREIGN KEY (user_id) REFERENCES user(id)
 )CHARSET=utf8;
 
-curl -XPOST --data 'idm=19T324&name=山田隆' http://192.168.33.10:80/monitoring/api.php 
-curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199217"}' http://192.168.33.10:80/monitoring/api.php
-curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199218"}' http://192.168.33.10:80/monitoring/api.php
-curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199219", "name":"山田隆"}' http://192.168.33.10:80/monitoring/api.php
-curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199220", "name":"佐藤健"}' http://192.168.33.10:80/monitoring/api.php
-curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199221", "name":"山田剛"}' http://192.168.33.10:80/monitoring/api.php
-curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199222", "name":"近藤正義"}' http://192.168.33.10:80/monitoring/api.php
+-- curl -XPOST --data 'idm=19T324&name=山田隆' http://192.168.33.10:80/monitoring/api.php
+-- curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199217"}' http://192.168.33.10:80/monitoring/api.php
+-- curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199218"}' http://192.168.33.10:80/monitoring/api.php
+-- curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199219", "name":"山田隆"}' http://192.168.33.10:80/monitoring/api.php
+-- curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199220", "name":"佐藤健"}' http://192.168.33.10:80/monitoring/api.php
+-- curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199221", "name":"山田剛"}' http://192.168.33.10:80/monitoring/api.php
+-- curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199222", "name":"近藤正義"}' http://192.168.33.10:80/monitoring/api.php
