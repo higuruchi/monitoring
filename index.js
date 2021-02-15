@@ -49,9 +49,9 @@ jQuery(function($) {
 
                 if (data.log) {
                     data.log.forEach(function(element) {
-                        let li = $('<li></li>');
-                        let time = $('<div></div>').addClass('time').text(element.enter_time+'~'+element.exit_time);
-                        let name = $('<div></div>').addClass('name').text(element.name);
+                        const li = $('<li></li>');
+                        const time = $('<div></div>').addClass('time').text(element.enter_time+'~'+element.exit_time);
+                        const name = $('<div></div>').addClass('name').text(element.name);
     
                         li.append(time).append(name);
                         ul.append(li);
@@ -91,8 +91,8 @@ jQuery(function($) {
                 // それらのデータをDOMに追加することにより、
                 // リアルタイム更新を実現しています
                 const users = data.map(function(user) {
-                    let time = $('<div></div>').addClass('time').text(user.enter_time);
-                    let name = $('<div></div>').addClass('name').text(user.name);
+                    const time = $('<div></div>').addClass('time').text(user.enter_time);
+                    const name = $('<div></div>').addClass('name').text(user.name);
 
                     return $('<div></div>').append(time, name);
                 });
