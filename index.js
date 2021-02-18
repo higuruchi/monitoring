@@ -26,8 +26,6 @@ jQuery(function($) {
                 to = '';
             }
 
-            console.log(idm, name, from, to);
-
             $.ajax({
                 url : 'api.php',
                 type : 'GET',
@@ -76,26 +74,20 @@ jQuery(function($) {
         setInterval(function (){
             $.ajax({
                 url : 'api.php',
-                // GETメソッドを利用します。
                 type : 'GET',
-                // 応答データの種類はJSON
-                dataType : 'json',
-                // サーバ側では、command変数内の文字列により
-                // 処理の分岐を行っているため、現在入室している
-                // ユーザのデータを取得するために"use_now"を入れます。
+                dataType : 'json', //// 応答データの種類
                 data : {
-                    command : 'use_now'
+                    command : 'use_now' //リクエストパラメータ
                 }
             }).done(function(data) {
-                // サーバからの返却値がdataに入っているため、
-                // それらのデータをDOMに追加することにより、
-                // リアルタイム更新を実現しています
-                const users = data.map(function(user) {
+                // サーバからの返却値をDOMに追加
+
+                let users = data.log.map(function(user) {
                     const time = $('<div></div>').addClass('time').text(user.enter_time);
                     const name = $('<div></div>').addClass('name').text(user.name);
 
                     return $('<div></div>').append(time, name);
-                });
+                })
                 $('.use_now').html(users);
             }).fail(function() {
                 alert('通信に失敗しました')

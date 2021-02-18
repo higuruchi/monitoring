@@ -199,6 +199,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(search_log($idm, $name, $from, $to));
 
     } else if ($_GET['command'] === 'use_now') {
+        // $now = new DateTime();
+        // $to = $now->format('Y-m-d H:i:s');
+        // $now->sub(new DateInterval('P1D'));
+        // $from = $now->format('Y-m-d H:i:s');
+
+        // echo json_encode(search_log('', '', $from, $to));
+        
         echo json_encode(use_now());
     }
 }
