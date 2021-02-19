@@ -7,8 +7,6 @@ function h($str) {
     return $str;
 }
 
-
-
 class OpeDB {
 
     private $dbh;
@@ -28,7 +26,7 @@ class OpeDB {
     }
 
     // dbh変数セッター----------------
-    private function setDbh() {
+    private function setDbh() {   
         $this->dbh = $this->connectDB();
     }
 
@@ -58,10 +56,10 @@ class OpeDB {
     // --------------------------------------------
 
     // 任意のidmのユーザがuserテーブルにいるかどうか確認する------
-    private function check_user() {
+    public function check_user() {
     
         $sql = 'SELECT * FROM user WHERE idm=:idm';
-        $stmt = $this->GetDbh->prepare($sql);
+        $stmt = $this->GetDbh()->prepare($sql);
         $stmt->bindValue(':idm', $this->getIdm());
         $stmt->execute();
 
@@ -75,10 +73,10 @@ class OpeDB {
     // ----------------------------------------------------------
 
     // userテーブルにユーザを追加する----------------------------
-    private function add_user() {
+    public function add_user() {
 
         $sql = 'INSERT INTO user (idm, name) VALUES (:idm, :name)';
-        $stmt = $this->getDbh->prepare($sql);
+        $stmt = $this->getDbh()->prepare($sql);
         $stmt->bindValue(':idm', $this->getIdm());
         $stmt->bindValue(':name', $this->getName());
         $stmt->execute();
@@ -90,6 +88,7 @@ class OpeDB {
     public function update_log() {
 
         try {
+
             $this->getDbh()->beginTransaction();
 
             if ($this->check_user() === false) {
@@ -104,8 +103,8 @@ class OpeDB {
                     'AND user.idm=:idm '.
                     'ORDER BY log.enter_time DESC LIMIT 1';
 
-            $stmt = $this->getDbh->prepare($sql);
-            $stmt->bindValue(':idm', $this->getIdm);
+            $stmt = $this->getDbh()->prepare($sql);
+            $stmt->bindValue(':idm', $this->getIdm());
             $stmt->execute();
             $ret = $stmt->fetch();
 
@@ -117,7 +116,7 @@ class OpeDB {
                         'WHERE exit_time IS NULL '.
                         'AND user_id=:idm '.
                         'ORDER BY enter_time DESC LIMIT 1';
-                $stmt = $this->getDbh->prepare($sql);
+                $stmt = $this->getDbh()->prepare($sql);
                 $stmt->bindValue(':idm', $this->getIdm());
                 $stmt->execute();
 
@@ -130,10 +129,9 @@ class OpeDB {
                 $user_id = $this->check_user();
 
                 $sql = 'INSERT INTO log (user_id) VALUES (:user_id)';
-                $stmt = $this->getDbh->prepare($sql);
+                $stmt = $this->getDbh()->prepare($sql);
                 $stmt->bindValue(':user_id', $user_id);
                 $stmt->execute();
-                $this->getDbh()->commit();
 
                 $retarr = [
                     'result' => 'in'
@@ -193,7 +191,7 @@ class OpeDB {
         }
     }
 
-    // 現在利用している利用者のデータを取ってくる
+    // 現在利用している利用者のデータを取ってくる----------------------
     public function use_now() {
         try {
             $sql = 'SELECT user.name, log.enter_time '.
@@ -210,52 +208,59 @@ class OpeDB {
             return $e;
         }
     }
+    // -------------------------------------------------------------------
 
-    // ユーザの参照
+    // ユーザの参照--------------------------------------------------------
     public function show_user(int $id, string $idm, string $name) {
         try {
 
             if ($id === -1 && $idm === '' && $name === '') {
                 $sql = 'SELECT id, idm, name '.
                         'FROM user ';
+                $stmt = $this->getDbh()->query($sql);
             } else {
                 $sql = 'SELECT id, idm, name '.
                         'FROM user '.
                         'WHERE ';
 
                 if ($id !== -1) {
-                    $sql .= 'id=?';
-                    $data[] = $id;
+                    $sql .= 'id=:id ';
                 }
 
                 if ($idm !== '' && $id !== -1) {
-                    $sql .= 'AND idm=?';
+                    $sql .= 'AND idm=:idm ';
                     $data[] = $idm;
                 } else if ($idm !== '') {
-                    $sql .= 'idm=?';
-                    $data[] = $idm;
+                    $sql .= 'idm=:idm ';
                 }
 
                 if ($name !== '' && ($id !== -1 || $name !== '')) {
-                    $sql .= 'AND name=?';
+                    $sql .= 'AND name=:name ';
                     $data[] = $name;
                 }else if ($name !== '') {
-                    $sql .= 'idm=?';
-                    $data[] = $idm;
+                    $sql .= 'name=:name ';
                 }
 
             
                 $stmt = $this->getDbh()->prepare($sql);
-                $stmt->execute($data);
+                if ($id !== -1) {
+                    $stmt->bindValue(':id', $id);
+                }
+                if ($idm !== '') {
+                    $stmt->bindValue(':idm', $idm);
+                }
+                if ($name !== '' ) {
+                    $stmt->bindValue(':name', $name);
+                }
+                $stmt->execute();
+            } 
 
-                $retarr = [
-                    'result' => 'success',
-                    'user_data' => $stmt->fetchAll(),
-                ];
+            $retarr = [
+                'result' => 'success',
+                'user_data' => $stmt->fetchAll(),
+            ];
 
-                return $retarr;
-            }
-
+            return $retarr;
         } catch (Exception $e) {
             $retarr = [
                 'result' => 'fail',
@@ -264,10 +269,13 @@ class OpeDB {
             return $retarr;
         }
     }
+    // --------------------------------------------------------------------------------------
 
-    public function change_user() {
-        
-    }
+    // public update_user($user_id, $name) {
+
+    // }
+
+    
 }
 
 // -------------------------------------------------------------------------------------------------------
@@ -308,6 +316,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $opeDB = new OpeDB('guest', '0000000000000000');
         echo json_encode($opeDB->use_now());
     } else if (h($_GET['command']) === 'show_user') {
+        $opeDB = new OpeDB('guest', '0000000000000000');
+        
+        echo json_encode($opeDB->show_user(-1, '', ''));
     }
 }
 

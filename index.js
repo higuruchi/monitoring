@@ -76,20 +76,12 @@ jQuery(function($) {
         setInterval(function (){
             $.ajax({
                 url : 'api.php',
-                // GETメソッドを利用します。
                 type : 'GET',
-                // 応答データの種類はJSON
                 dataType : 'json',
-                // サーバ側では、command変数内の文字列により
-                // 処理の分岐を行っているため、現在入室している
-                // ユーザのデータを取得するために"use_now"を入れます。
                 data : {
                     command : 'use_now'
                 }
             }).done(function(data) {
-                // サーバからの返却値がdataに入っているため、
-                // それらのデータをDOMに追加することにより、
-                // リアルタイム更新を実現しています
                 const users = data.map(function(user) {
                     let time = $('<div></div>').addClass('time').text(user.enter_time);
                     let name = $('<div></div>').addClass('name').text(user.name);

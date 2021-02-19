@@ -12,7 +12,7 @@ CREATE TABLE log(
     FOREIGN KEY (user_id) REFERENCES user(id) 
 )CHARSET=utf8;
 
-curl -XPOST --data 'idm=19T324&name=山田隆' http://192.168.33.10:80/monitoring/api.php 
+curl -XPOST --data 'idm=01140214cd199217&name=山田隆' http://192.168.33.10:80/monitoring/api.php 
 curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199217"}' http://192.168.33.10:80/monitoring/api.php
 curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199218"}' http://192.168.33.10:80/monitoring/api.php
 curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199219", "name":"山田隆"}' http://192.168.33.10:80/monitoring/api.php
