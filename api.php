@@ -19,17 +19,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=UTF-8');
     $arr = json_decode(file_get_contents('php://input'), true);
 
-    $idm = $arr['idm'];
-    $name = $arr['name'];
+    if ($_POST['command'] === 'update_user') {
+        $new_name = h($_POST['name']);
 
-    if (is_null($name)) {
-        $name = 'guest';
+        if ($new_name === '') {
+            $retarr = [
+                'result' => 'fail'
+            ];
+            echo json_encode($retarr);
+        } else {
+            $opeDB = new OpeDB($_SESSION['name'], $_SESSION['idm']);
+            echo json_encode($opeDb->update_user($new_name));
+        }
+    } else {
+        $idm = $arr['idm'];
+        $name = $arr['name'];
+    
+        if (is_null($name)) {
+            $name = 'guest';
+        }
+            
+        $opeDB = new OpeDB($name, $idm);
+        $retarr = $opeDB->update_log();
+    
+        echo json_encode($retarr);
     }
-        
-    $opeDB = new OpeDB($name, $idm);
-    $retarr = $opeDB->update_log();
-
-    echo json_encode($retarr);
 
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     header('Content-Type: application/json; charset=UTF-8');

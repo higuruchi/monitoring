@@ -52,9 +52,10 @@ class OpeDB {
     // 任意のidmのユーザがuserテーブルにいるかどうか確認する------
     public function check_user() {
     
-        $sql = 'SELECT * FROM user WHERE idm=:idm';
+        $sql = 'SELECT * FROM user WHERE idm=:idm OR name=:name';
         $stmt = $this->GetDbh()->prepare($sql);
         $stmt->bindValue(':idm', $this->getIdm());
+        $stmt->bindValue(':name', $this->getName());
         $stmt->execute();
 
         $ret = $stmt->fetch();
@@ -263,16 +264,39 @@ class OpeDB {
             return $retarr;
         }
     }
-    // --------------------------------------------------------------------------------------
 
-    // public update_user($new_name) {
-    //     try {
-    //         $this->getDbh()->beginTransaction();
-    //         if ($this->check_user() === false) {
+    public function update_user($new_name) {
+        try {
+            $this->getDbh()->beginTransaction();
+            if ($this->check_user() === false || $new_name == '') {
+                $retarr = [
+                    'result' => 'fail'
+                ];
+                echo json_encode($retarr);
+                exit();
+            }
 
-    //         }
-    //     }
-    // }
+            $sql = 'UPDATE user '.
+                    'SET name='.$new_name.' '.
+                    'WHERE idm='.$this->getIdm();
+            $this->getDbh()->query($sql);
+            $this->getDbh()->commit();
+
+            $retarr = [
+                'result' => 'success'
+            ];
+            return $retarr;
+
+        } catch (Exception $e) {
+            $this->getDbh()->rollBack();
+            $retarr = [
+                'result' => 'fail',
+                'error' => $e
+            ];
+            
+            return $retarr;
+        }
+    }
 
     
 }
