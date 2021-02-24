@@ -4,13 +4,12 @@ require_once('common.php');
 class OpeDB {
 
     private $dbh;
-    private $name;
-    private $idm;
+    private $userId = -1;
+    private $name = 'guest';
+    private $idm = '0000000000000000';
 
-    public function __construct($name, $idm) {
+    public function __construct() {
         $this->setDbh();
-        $this->setName($name);
-        $this->setIdm($idm);
     }
 
     private function connectDB() {
@@ -29,53 +28,93 @@ class OpeDB {
     }
     // -------------------------------
 
+    // userId変数セッター----------------
+    public function setUserId($userId) {
+        $this->userId = $userId;
+    }
+    public function getUserId() {
+        return $this->userId;
+    }
+    // -------------------------------
+
+
+
     // name変数ゲッター、セッター---------------
-    private function setName(string $name) {
+    public function setName(string $name) {
         $this->name = $name;
     }
 
-    private function getName() {
+    public function getName() {
         return $this->name;
     }
     //-------------------------------------------- 
 
     // idm変数セッター、ゲッター--------------------
-    private function setIdm(string $idm) {
+    public function setIdm(string $idm) {
         $this->idm = $idm;
     }
 
-    private function getIdm() {
+    public function getIdm() {
         return $this->idm;
     }
     // --------------------------------------------
 
     // 任意のidmのユーザがuserテーブルにいるかどうか確認する------
     public function check_user() {
-    
-        $sql = 'SELECT * FROM user WHERE idm=:idm OR name=:name';
-        $stmt = $this->GetDbh()->prepare($sql);
-        $stmt->bindValue(':idm', $this->getIdm());
-        $stmt->bindValue(':name', $this->getName());
-        $stmt->execute();
 
-        $ret = $stmt->fetch();
-        if ($ret) {
-            return $ret;
-        } else {
+        if ($this->getUserId() === -1 && $this->getName() === 'guest' && $this->getIdm() === '0000000000000000') {
             return false;
+        } else {
+            $data = array();
+            $column = array();
+            $sql = 'SELECT * FROM user WHERE ';
+
+            if ($this->getUserId() !== -1) {
+                $data[] = $this->getUserId();
+                $column[] = 'id';
+            }
+            if ($this->getName() !== 'guest') {
+                $data[] = $this->getName();
+                $column[] = 'name';
+            }
+            if ($this->getIdm() !== '0000000000000000') {
+                $data[] = $this->getIdm();
+                $column[] = 'idm';
+            }
+            $bind1 = $column;
+            $bind2 = $column;
+            $sql .= array_pop($column).'=:'.array_pop($bind1);
+            while(!empty($column)) {
+                $sql .= 'AND '.array_pop($column).'=:'.array_pop($bind1);
+            }
+            $stmt = $this->getDbh()->prepare($sql);
+            while(!empty($data)) {
+                $stmt->bindValue(':'.array_pop($bind2), array_pop($data));
+            }
+            $stmt->execute();
+            $ret = $stmt->fetch();
+            if ($ret) {
+                return $ret;
+            } else {
+                return false;
+            }
         }
     }
     // ----------------------------------------------------------
 
     // userテーブルにユーザを追加する----------------------------
     public function add_user() {
+        if ($this->getIdm() === '0000000000000000') {
+            return false;
+        } else if ($this->check_user() === false) {
 
-        $sql = 'INSERT INTO user (idm, name) VALUES (:idm, :name)';
-        $stmt = $this->getDbh()->prepare($sql);
-        $stmt->bindValue(':idm', $this->getIdm());
-        $stmt->bindValue(':name', $this->getName());
-        $stmt->execute();
-        return true;
+            $sql = 'INSERT INTO user (idm, name) VALUES (:idm, :name)';
+            $stmt = $this->getDbh()->prepare($sql);
+            $stmt->bindValue(':idm', $this->getIdm());
+            $stmt->bindValue(':name', $this->getName());
+            $stmt->execute();
+            return true;
+        }
     }
     // ---------------------------------------------------------
 
@@ -87,7 +126,9 @@ class OpeDB {
             $this->getDbh()->beginTransaction();
 
             if ($this->check_user() === false) {
-                $this->add_user();
+                if (!$this->add_user()) {
+                    return false;
+                }
             }
 
             $sql = 'SELECT * '.
@@ -265,10 +306,10 @@ class OpeDB {
         }
     }
 
-    public function update_user($new_name) {
+    public function update_user($newName) {
         try {
             $this->getDbh()->beginTransaction();
-            if ($this->check_user() === false || $new_name == '') {
+            if ($this->check_user() === false || $newName === '') {
                 $retarr = [
                     'result' => 'fail'
                 ];
@@ -277,9 +318,12 @@ class OpeDB {
             }
 
             $sql = 'UPDATE user '.
-                    'SET name='.$new_name.' '.
-                    'WHERE idm='.$this->getIdm();
-            $this->getDbh()->query($sql);
+                    'SET name=:name '.
+                    'WHERE id=:id';
+            $stmt = $this->getDbh()->prepare($sql);
+            $stmt->bindValue(':name', $newName);
+            $stmt->bindValue(':id', $this->getUserId());
+            $stmt->execute();
             $this->getDbh()->commit();
 
             $retarr = [
@@ -297,7 +341,6 @@ class OpeDB {
             return $retarr;
         }
     }
-
     
 }
 

@@ -1,97 +1,281 @@
 jQuery(function($) {
 
-    // 検索ボタンを押したときの処理
-    $('button').on('click.button', function() {
-        let from = $('input[name=from]');
-        let to = $('input[name=to]');
-        let search_condition = $('input[name=search_condition]');
-        let name = '';
-        let idm = '';
+    function searchLog() {
+        let main = $('.main');
+        let searchCondition = $('<input>').attr({
+            type: 'text',
+            name: 'search_condition',
+            placeholder: '検索条件'
+        });
+        let from = $('<input>').attr({
+            type: 'datetime-local',
+            name: 'from'
+        });
+        let to = $('<input>').attr({
+            type: 'datetime-local',
+            name: 'to'
+        });
+        let button = $('<button>').addClass('search').text('検索');
+        let div = $('<div>').append(searchCondition).append(from).append('~').append(to).append(button);
+        main.append(div);
 
-        if ((from.val() != '' && to.val() != '') || search_condition.val() != '') {
+        button.on('click', function() {
+            let from = $('input[name=from]');
+            let to = $('input[name=to]');
+            let search_condition = $('input[name=search_condition]');
+            let name = '';
+            let idm = '';
 
-            if (search_condition != '') {
-                if (search_condition.val().match('^[0-9a-fA-F]{16}$')) {
-                    idm = search_condition.val();
+            if ((from.val() != '' && to.val() != '') || search_condition.val() != '') {
+
+                if (search_condition != '') {
+                    if (search_condition.val().match('^[0-9a-fA-F]{16}$')) {
+                        idm = search_condition.val();
+                    } else {
+                        name = search_condition.val();
+                    }
+                }
+
+                if (from.val() != '' && to.val() != '') {
+                    from = from.val();
+                    to = to.val();
                 } else {
-                    name = search_condition.val();
+                    from = '';
+                    to = '';
                 }
-            }
 
-            if (from.val() != '' && to.val() != '') {
-                from = from.val();
-                to = to.val();
-            } else {
-                from = '';
-                to = '';
-            }
+                console.log(idm, name, from, to);
 
-            console.log(idm, name, from, to);
+                $.ajax({
+                    url : 'api.php',
+                    type : 'GET',
+                    dataType : 'json',
+                    data : {
+                        command : 'search',
+                        idm : idm,
+                        name : name,
+                        from : from,
+                        to : to
+                    }
+                }).done(function(data) {
 
-            $.ajax({
-                url : 'api.php',
-                type : 'GET',
-                dataType : 'json',
-                data : {
-                    command : 'search',
-                    idm : idm,
-                    name : name,
-                    from : from,
-                    to : to
-                }
-            }).done(function(data) {
+                    if (data.log) {
+                        let main = $('.main'); 
+                        let ul = $('<ul>');
+                        data.log.forEach(function(element) {
+                            let li = $('<li>');
+                            let time = $('<div>').addClass('time').text(element.enter_time+'~'+element.exit_time);
+                            let name = $('<div>').addClass('name').text(element.name);
+        
+                            li.append(time).append(name);
+                            ul.append(li);
+                        });
+                        main.append(ul);
 
-                let ul = $('ul');
-                
-                search_condition.val('');
-
-                ul.html('');
-
-                if (data.log) {
-                    data.log.forEach(function(element) {
-                        let li = $('<li></li>');
-                        let time = $('<div></div>').addClass('time').text(element.enter_time+'~'+element.exit_time);
-                        let name = $('<div></div>').addClass('name').text(element.name);
-    
-                        li.append(time).append(name);
+                    } else {
+                        let li = $('<li></li>').text('検索に一致するログが見つかりませんでした');
                         ul.append(li);
-                    });
+                    }
+                }).fail(function(data) {
+                    alert('通信に失敗しました');
+                });
 
-                } else {
-                    let li = $('<li></li>').text('検索に一致するログが見つかりませんでした');
-                    ul.apend(li);
+            } else {
+                alert('入力値が正しくありません');
+            }
+        });
+    }
+
+    function clearMain() {
+        $('.main').html('');
+    }
+
+    function home(date) {
+        $.ajax({
+            url : 'api.php',
+            type : 'GET',
+            dataType : 'json',
+            data : {
+                command : 'search',
+                from : encodeURI(date+' '+'00:00:00'),
+                to : encodeURI(date+' '+'23:59:59')
+            }
+        }).done(function(retData) {
+            let canvas = $('<canvas>');
+            $('.main').append(canvas);
+
+            data = [];
+            labels = [];
+            for (let i = 0; i < 24; i++) {
+                data[i] = 0;
+                labels[i] = i;
+            }
+
+            retData.log.forEach(function(element) {
+                data[Number(element.enter_time.slice(11, 13))]++;
+            });
+
+            new Chart(canvas, {
+                type : 'bar',
+                data : {
+                    labels : labels,
+                    datasets : [
+                        {
+                            label : '入室者数',
+                            data : data,
+                            backgroundColor : 'rgba(130, 201, 169,)'
+                        }
+                    ]
+                },
+                options : {
+                    title : {
+                        display : true,
+                        text : '今日の入室者数'
+                    },
+                    scales : {
+                        yAxes : [{
+                            ticks : {
+                                suggestedMax : 50,
+                                suggestedMin : 0,
+                                stepSize : 5,
+                                callback : function(value, index, values) {
+                                    return value + '人'
+                                }
+                            }
+                        }]
+                    },
                 }
+            });
+        });
+    }
 
-            }).fail(function(data) {
-                alert('通信に失敗しました');
-            })
+    function manageUser() {
+        let userIdText = $('<input>').attr({
+            type: 'text',
+            name: 'userId',
+            placeholder: 'ユーザID'
+        });
+        let nameText = $('<input>').attr({
+            type: 'text',
+            name: 'name',
+            placeholder: 'ユーザ名'
+        });
+        let newNameText = $('<input>').attr({
+            type: 'text',
+            name: 'newName',
+            placeholder: '新しいユーザ名'
+        });
+        let button = $('<button>').text('変更');
+        let wrapper = $('<div>').addClass('wrapper');
+        let manageUserForm = $('<div>').addClass('manageUserForm');
+        
+        wrapper.append(userIdText).append(nameText).append(newNameText).append(button);
+        manageUserForm.append(wrapper);
+        $('.main').append(manageUserForm);
+        button.on('click', function() {
+            let userId = $('input[name=userId]').val();
+            let name = $('input[name=name]').val()
+            let newName = $('input[name=newName]').val();
 
-        } else {
-            alert('入力値が正しくありません');
+            if (userId !== '' || name !== '') {
+                if (newName !== '') {
+                    $.ajax({
+                        url: 'api.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            command: 'update_user',
+                            userId: userId,
+                            name: name,
+                            newName: newName
+                        }
+                    }).done(function(data) {
+                        if (data.result === 'success') {
+                            alert(newName+'さんに変更しました');
+                        } else {
+                            alert('失敗しました');
+                        }
+                    })
+                } else {
+                    alert('新しいユーザ名を入力してください');
+                }
+            } else {
+                alert('ユーザ名もしくは、ユーザIDを入力してください')
+            }
+        })
+    }
+
+    
+    function formatDate(dt) {
+        let year = dt.getFullYear();
+        let month = ('00'+(dt.getMonth()+1)).slice(-2);
+        let date = ('00' + dt.getDate()).slice(-2);
+        return year + '-' + month + '-' + date;
+    }
+    
+    $(home(formatDate(new Date())));
+    
+    $('li').on('click', function() {
+        let command = $(this).attr('name');
+        console.log(command);
+    
+        switch (command) {
+            case 'home':
+                clearMain();
+                home(formatDate(new Date()));
+                break;
+            case 'search_log':
+                clearMain();
+                searchLog();
+                break;
+            case 'manage_user':
+                clearMain();
+                manageUser();
+                break;
+            case 'statistics':
+                break;
+    
         }
     });
 
-    // 一定時間ごとに現在入室している人のデータを取ってくる
-    $(function (){
-        setInterval(function (){
-            $.ajax({
-                url : 'api.php',
-                type : 'GET',
-                dataType : 'json',
-                data : {
-                    command : 'use_now'
-                }
-            }).done(function(data) {
-                const users = data.map(function(user) {
-                    let time = $('<div></div>').addClass('time').text(user.enter_time);
-                    let name = $('<div></div>').addClass('name').text(user.name);
+    $('header div').on('click', function() {
+        clearMain();
+        let nameText = $('<input>').attr({
+            type: 'text',
+            name: 'name',
+            placeholder: 'ユーザ名'
+        });
+        let userIdText = $('<input>').attr({
+            type: 'text',
+            name: 'userId',
+            placeholder: 'ユーザID'
+        });
+        let button = $('<button>').text('ログイン');
+        let wrapper = $('<div>').addClass('wrapper');
+        let loginForm = $('<div>').addClass('loginForm');
+        
+        wrapper.append(nameText).append(userIdText).append(button);
+        loginForm.append(wrapper);
+        $('.main').append(loginForm);
 
-                    return $('<div></div>').append(time, name);
-                });
-                $('.use_now').html(users);
-            }).fail(function() {
-                alert('通信に失敗しました')
-            })
-        }, 10000);
-    });
-})
+        button.on('click', function() {
+            let name = $('input[name=name]').val();
+            let userId = $('input[name=userId]').val();
+
+            if (name !== '' || userId !== '') {
+                $.ajax({
+                    url: 'login_api.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        command: 'login',
+                        name: name,
+                        userId: userId
+                    }
+                }).done(function(data) {
+                    console.log(data);
+                })
+            }
+        })
+    })
+});

@@ -6,9 +6,19 @@ body {
 }
 
 header {
-    height: 200px;
-    background-color: aquamarine;
+    height: 100px;
+    background-color: #81d0cb;
+    display: flex;
+    justify-content: space-between;
 }
+header h1 {
+    font-family: 'Kosugi', sans-serif;
+}
+header div {
+    cursor:pointer;
+    font-family: 'Kosugi', sans-serif;
+}
+
 
 input[type="text"] {
     width: 200px; 
@@ -57,16 +67,26 @@ input[type="datetime-local"] {
 
 .main {
     box-shadow: 1px 1px 5px 1px #999;
+    position: relative;
 }
 
-.main h2 {
-    background-color: chartreuse;
-    text-align: center;
-} 
-
-.use_now {
-    background-color: chartreuse;
-    text-align: center;
+.manageUserForm, .loginForm {
+    height: 300px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: relative;
+    box-shadow: 1px 1px 5px 1px #999;
+}
+.manageUserForm .wrapper, .loginForm .wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .time {
@@ -74,25 +94,41 @@ input[type="datetime-local"] {
     color: gray;
 }
 
-left {
-    width: 300px;
-    max-height: 500px;
+aside {
+    width: 25%;
+    min-width: 150px;
     overflow-y:scroll;
 }
 
-left::-webkit-scrollbar {
+aside::-webkit-scrollbar {
     display: none;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+  
+ul li {
+    color: white;
+    background: #81d0cb;
+    line-height: 1.5;
+    padding: 0.5em 0.5em 0.5em 2em;
+    border-top: 2px solid white;
+    list-style-type: none!important;
+    font-weight: bold; /*好みで太字に*/
+    cursor:pointer;
+}
+
+ul li:before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f14a";
+    position: absolute;
+    left : 0.5em; /*左端からのアイコンまでの距離*/
+    color: white; /*アイコン色*/
 }
 
 .main {
     flex: 1;
-}
-
-right {
-    width: 300px;
-}
-
-footer {
-    height: 100px;
-    background-color: aquamarine;
 }

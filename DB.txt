@@ -17,5 +17,5 @@ curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199217"}'
 curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199218"}' http://192.168.33.10:80/monitoring/api.php
 curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199219", "name":"山田隆"}' http://192.168.33.10:80/monitoring/api.php
 curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199220", "name":"佐藤健"}' http://192.168.33.10:80/monitoring/api.php
-curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199221", "name":"山田剛"}' http://192.168.33.10:80/monitoring/api.php
-curl -X POST -H "Content-Type: application/json" -d '{"idm":"01140214cd199222", "name":"近藤正義"}' http://192.168.33.10:80/monitoring/api.php
+curl -X POST -H "Content-Type: application/json" -d '{"command":"update_log","idm":"01140214cd199221", "name":"山田剛"}' http://192.168.33.10:80/monitoring/api.php
+curl -X POST -H "Content-Type: application/json" -d '{"command":"update_log", "idm":"01140214cd199222", "name":"近藤正義"}' http://192.168.33.10:80/monitoring/api.php
