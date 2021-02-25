@@ -7,6 +7,7 @@ class OpeDB {
     private $userId = -1;
     private $name = 'guest';
     private $idm = '0000000000000000';
+    private $password = null;
 
     public function __construct() {
         $this->setDbh();
@@ -58,6 +59,16 @@ class OpeDB {
         return $this->idm;
     }
     // --------------------------------------------
+    // idm変数セッター、ゲッター--------------------
+    public function setPassword(string $password) {
+        $this->password = $password;
+    }
+
+    public function getPassword() {
+        return $this->password;
+    }
+    // --------------------------------------------
+
 
     // 任意のidmのユーザがuserテーブルにいるかどうか確認する------
     public function check_user() {
@@ -101,6 +112,25 @@ class OpeDB {
         }
     }
     // ----------------------------------------------------------
+    public function login() {
+        if ($this->getPassword() !== null && $this->getUserId() !== -1) {
+            $sql = 'SELECT id, idm, name, student_id, access_right '.
+                    'FROM user '.
+                    'WHERE id=:id AND password=:password';
+            $stmt = $this->getDbh()->prepare($sql);
+            $stmt->bindValue(':id', $this->getUserId());
+            $stmt->bindValue(':password', $this->getPassword());
+            $stmt->execute();
+            $ret = $stmt->fetch();
+            if ($ret) {
+                return $ret;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     // userテーブルにユーザを追加する----------------------------
     public function add_user() {

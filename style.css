@@ -19,8 +19,12 @@ header div {
     font-family: 'Kosugi', sans-serif;
 }
 
+header div div i[name="logout"] {
+    display: none;
+}
 
-input[type="text"] {
+
+input[type="text"], input[type="password"] {
     width: 200px; 
     padding: 10px 15px;
     font-size: 16px;
@@ -29,7 +33,7 @@ input[type="text"] {
     box-sizing: border-box;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus, input[type="password"]:focus {
     border: 2px solid rgb(115, 115, 199); 
     z-index: 10;
     outline: 0;

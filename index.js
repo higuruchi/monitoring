@@ -174,7 +174,7 @@ jQuery(function($) {
         $('.main').append(manageUserForm);
         button.on('click', function() {
             let userId = $('input[name=userId]').val();
-            let name = $('input[name=name]').val()
+            let name = $('input[name=name]').val();
             let newName = $('input[name=newName]').val();
 
             if (userId !== '' || name !== '') {
@@ -192,6 +192,9 @@ jQuery(function($) {
                     }).done(function(data) {
                         if (data.result === 'success') {
                             alert(newName+'さんに変更しました');
+                            $('input[name=userId]').val('');
+                            $('input[name=name]').val('');
+                            $('input[name=newName]').val('');
                         } else {
                             alert('失敗しました');
                         }
@@ -240,41 +243,50 @@ jQuery(function($) {
 
     $('header div').on('click', function() {
         clearMain();
-        let nameText = $('<input>').attr({
-            type: 'text',
-            name: 'name',
-            placeholder: 'ユーザ名'
-        });
         let userIdText = $('<input>').attr({
             type: 'text',
             name: 'userId',
             placeholder: 'ユーザID'
         });
+        let passwordText = $('<input>').attr({
+            type: 'password',
+            name: 'password',
+            placeholder: 'パスワード'
+        });
         let button = $('<button>').text('ログイン');
         let wrapper = $('<div>').addClass('wrapper');
         let loginForm = $('<div>').addClass('loginForm');
         
-        wrapper.append(nameText).append(userIdText).append(button);
+        wrapper.append(userIdText).append(passwordText).append(button);
         loginForm.append(wrapper);
         $('.main').append(loginForm);
 
         button.on('click', function() {
-            let name = $('input[name=name]').val();
             let userId = $('input[name=userId]').val();
+            let password = $('input[name=password]').val();
 
-            if (name !== '' || userId !== '') {
+            if (userId !== '' && password !== '') {
                 $.ajax({
                     url: 'login_api.php',
                     type: 'POST',
                     dataType: 'json',
                     data: {
                         command: 'login',
-                        name: name,
-                        userId: userId
+                        userId: userId,
+                        password: password
                     }
                 }).done(function(data) {
                     console.log(data);
+                    alert('ようこそ'+data.name+'さん');
+                    $('aside nav ul li[name=home]').trigger('click');
+                    $('header div div i[name=logout]').show();
+                    $('header div div i[name=login]').hide();
+                    $('header div div span').text('ログアウト')
+                }).fail(function() {
+                    alert('ログインできませんでした');
                 })
+            } else {
+                alert('ユーザIDとパスワードを入力してください');
             }
         })
     })
