@@ -4,25 +4,27 @@ session_start();
 
 require_once('opeDB.php');
 require_once('common.php');
+require_once('signInSignOut.php');
 
 header('Content-Type: application/json; charset=UTF-8');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST['command'] === 'login') {
-        $userId = $_POST['userId'] ?? '';
+        $studentId = $_POST['studentId'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        $opeDB = new OpeDB();
-        if ($userId !== '' && $password !== '') {
-            $opeDB->setUserId($userId);
-            $opeDB->setPassword($password);
-            $ret = $opeDB->login();
+        $signInSignOut = new signInSignOut($studentId);
+        if ($studentId !== '' && $password !== '') {
+            $password = md5($password);
+            $signInSignOut->setPassword($password);
+            $ret = $signInSignOut->login();
             if ($ret !== false) {
                 $_SESSION['login'] = true;
                 $_SESSION['name'] = $ret['name'];
                 $_SESSION['idm'] = $ret['idm'];
                 $_SESSION['userId'] = $ret['id'];
                 $_SESSION['accessRight'] = $ret['access_right'];
+                $_SERVER['studentId'] = $ret['student_id'];
                 $retarr = [
                     'result' => 'success',
                     'name' => $_SESSION['name']

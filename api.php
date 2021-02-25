@@ -2,6 +2,9 @@
 
 require_once('common.php');
 require_once('opeDB.php');
+require_once('opeUserTable.php');
+require_once('opeLogTable.php');
+require_once('signInsignOut.php');
 session_start();
 session_regenerate_id();
 
@@ -18,17 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=UTF-8');
 
     if ($_POST['command'] === 'update_user') {
+
         if ($_SESSION['login']) {
-            $userId = $_POST['userId'];
+            $studentId = $_POST['studentId'];
             $newName = $_POST['newName'];
 
-            $opeDB = new OpeDB();
+            $opeUserTable = new OpeUserTable($studentId);
             if ($_SESSION['accessRight'] === true) {
-                $opeDB->setUserId($userId);
-                echo json_encode($opeDB->update_user($newName));
-            } else if ($_SESSION['userId'] === $userId) {
-               $opeDB->setUserId($userId);
-               echo json_encode($opeDB->update_user($newName));
+                $opeUserTable->setUserId($userId);
+                echo json_encode($opeUserTable->update_user($newName));
+            } else if ($_SESSION['studentId'] === $studentId) {
+               $opeDB->setUserId($studentId);
+               echo json_encode($opeUserTable->update_user($newName));
             } else {
                 $retarr = [
                     'result' => 'faile',
@@ -47,10 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $idm = $arr['idm'] ?? '0000000000000000';
         $name = $arr['name'] ?? 'guest';
+        $studentId = $arr['studentId'] ?? '00X000';
             
-        $opeDB = new OpeDB();
-        $opeDB->setIdm($idm);
-        $opeDB->setName($name);
+        $opeLogTable = new OpeLogTable($studentId);
+        $opeLogTable->setIdm($idm);
+        $opeLogTable->setName($name);
         $retarr = $opeDB->update_log();
     
         echo json_encode($retarr);
@@ -60,22 +65,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header('Content-Type: application/json; charset=UTF-8');
 
-    if (h($_GET['command']) === 'search') {
+    if ($_GET['command'] === 'search') {
 
         $from = urldecode($_GET['from']);
         $to = urldecode($_GET['to']);
         $idm = $_GET['idm'] ?? '';
         $name = $_GET['name'] ?? '';
-        // $opeDB = new OpeDB($_SESSION['name'], $_SESSION['idm']);
+        // echo json_encode(['a'=>'a']);
+        // exit();
 
-        $opeDB = new OpeDB();
-        echo json_encode($opeDB->search_log($idm, $name, $from, $to));
+        $opeLogTable = new OpeLogTable('0X000');
+        echo json_encode($opeLogTable->search_log($idm, $name, $from, $to));
 
-    } else if (h($_GET['command']) === 'use_now') {
+    } else if ($_GET['command'] === 'use_now') {
 
         if (check_login() === true) {
-            $opeDB = new OpeDB();
-            echo json_encode($opeDB->use_now());
+            $opeLogTable = new OpeLogTable('00X000');
+            echo json_encode($opeLogTable->use_now());
         }  else {
             $retarr = [
                 'result' => 'fail'
@@ -84,7 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
 
-    } else if (h($_GET['command']) === 'show_user') {
+    } 
+    else if ($_GET['command'] === 'show_user') {
         
         if (check_login() === true) {
 

@@ -243,10 +243,10 @@ jQuery(function($) {
 
     $('header div').on('click', function() {
         clearMain();
-        let userIdText = $('<input>').attr({
+        let studentIdText = $('<input>').attr({
             type: 'text',
-            name: 'userId',
-            placeholder: 'ユーザID'
+            name: 'studentId',
+            placeholder: '学籍番号'
         });
         let passwordText = $('<input>').attr({
             type: 'password',
@@ -257,22 +257,22 @@ jQuery(function($) {
         let wrapper = $('<div>').addClass('wrapper');
         let loginForm = $('<div>').addClass('loginForm');
         
-        wrapper.append(userIdText).append(passwordText).append(button);
+        wrapper.append(studentIdText).append(passwordText).append(button);
         loginForm.append(wrapper);
         $('.main').append(loginForm);
 
         button.on('click', function() {
-            let userId = $('input[name=userId]').val();
+            let studentId = $('input[name=studentId]').val();
             let password = $('input[name=password]').val();
 
-            if (userId !== '' && password !== '') {
+            if (studentId !== '' && password !== '') {
                 $.ajax({
                     url: 'login_api.php',
                     type: 'POST',
                     dataType: 'json',
                     data: {
                         command: 'login',
-                        userId: userId,
+                        studentId: studentId,
                         password: password
                     }
                 }).done(function(data) {
@@ -286,7 +286,7 @@ jQuery(function($) {
                     alert('ログインできませんでした');
                 })
             } else {
-                alert('ユーザIDとパスワードを入力してください');
+                alert('学籍番号とパスワードを入力してください');
             }
         })
     })
