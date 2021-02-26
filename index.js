@@ -1,5 +1,9 @@
 jQuery(function($) {
 
+    function clearMain() {
+        $('.main').html('');
+    }
+
     function searchLog() {
         let main = $('.main');
         let searchCondition = $('<input>').attr({
@@ -86,10 +90,6 @@ jQuery(function($) {
         });
     }
 
-    function clearMain() {
-        $('.main').html('');
-    }
-
     function home(date) {
         $.ajax({
             url : 'api.php',
@@ -149,63 +149,80 @@ jQuery(function($) {
         });
     }
 
-    function manageUser() {
-        let userIdText = $('<input>').attr({
-            type: 'text',
-            name: 'userId',
-            placeholder: 'ユーザID'
+    function changePassword() {
+        let passwordText = $('<input>').attr({
+            type: 'password',
+            name: 'password',
+            placeholder: 'パスワード'
         });
-        let nameText = $('<input>').attr({
-            type: 'text',
-            name: 'name',
-            placeholder: 'ユーザ名'
-        });
-        let newNameText = $('<input>').attr({
-            type: 'text',
-            name: 'newName',
-            placeholder: '新しいユーザ名'
+        let newPasswordText = $('<input>').attr({
+            type: 'password',
+            name: 'newPassword',
+            placeholder: '新しいパスワード'
         });
         let button = $('<button>').text('変更');
         let wrapper = $('<div>').addClass('wrapper');
-        let manageUserForm = $('<div>').addClass('manageUserForm');
+        let passwordForm = $('<div>').addClass('passwordForm');
         
-        wrapper.append(userIdText).append(nameText).append(newNameText).append(button);
-        manageUserForm.append(wrapper);
-        $('.main').append(manageUserForm);
-        button.on('click', function() {
-            let userId = $('input[name=userId]').val();
-            let name = $('input[name=name]').val();
-            let newName = $('input[name=newName]').val();
+        wrapper.append(passwordText).append(newPasswordText).append(button);
+        passwordForm.append(wrapper);
+        $('.main').append(passwordForm);
 
-            if (userId !== '' || name !== '') {
-                if (newName !== '') {
-                    $.ajax({
-                        url: 'api.php',
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            command: 'update_user',
-                            userId: userId,
-                            name: name,
-                            newName: newName
-                        }
-                    }).done(function(data) {
-                        if (data.result === 'success') {
-                            alert(newName+'さんに変更しました');
-                            $('input[name=userId]').val('');
-                            $('input[name=name]').val('');
-                            $('input[name=newName]').val('');
-                        } else {
-                            alert('失敗しました');
-                        }
-                    })
-                } else {
-                    alert('新しいユーザ名を入力してください');
-                }
+        button.on('click', function() {
+            let password = $('input[name=password]').val();
+            let newPassword = $('input[name=newPassword]').val();
+
+            console.log(newPassword);
+
+            if (password !== '' && newPassword !== '') {
+                $.ajax({
+                    url: 'api.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        command: 'update_password',
+                        password: password,
+                        newPassword: newPassword,
+                    }
+                }).done(function(data) {
+                    if (data.result === 'success') {
+                        alert('変更しました');
+                        $('input[name=password]').val('');
+                        $('input[name=newPassword]').val('');
+                    } else {
+                        alert('失敗しました');
+                    }
+                })
             } else {
-                alert('ユーザ名もしくは、ユーザIDを入力してください')
+                alert('入力項目を確認してください');
             }
-        })
+        });
+    }
+
+    function manageUser() {
+
+        let changePasswordForm = $('<div>').attr({name: 'changePassword'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('パスワード')).append('<i>').addClass('fas fa-key fa-2x'));
+        let changeUserNameForm = $('<div>').attr({nmae: 'changeUserName'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('ユーザ名')).append('<i>').addClass('fas fa-user-cog fa-2x'));
+        let showUserForm = $('<div>').attr({name: 'showUser'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('ユーザ検索')).append('<i>').addClass('fas fa-users fa-2x'));
+        $('.main').append(changePasswordForm).append(changeUserNameForm).append(showUserForm);
+
+        $('.form').on('click', function() {
+            let command = $(this).attr('name');
+
+            clearMain();
+            switch (command) {
+                case 'changePassword':
+                    changePassword();
+                    break;
+                case 'changeUserName':
+                    changeUserName();
+                    break;
+                case 'showUser':
+                    showUser();
+                    break;
+            }
+        });
+        
     }
 
     
@@ -237,7 +254,6 @@ jQuery(function($) {
                 break;
             case 'statistics':
                 break;
-    
         }
     });
 

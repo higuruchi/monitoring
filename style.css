@@ -74,7 +74,7 @@ input[type="datetime-local"] {
     position: relative;
 }
 
-.manageUserForm, .loginForm {
+.passwordForm, .loginForm {
     height: 300px;
     width: 300px;
     display: flex;
@@ -86,12 +86,21 @@ input[type="datetime-local"] {
     position: relative;
     box-shadow: 1px 1px 5px 1px #999;
 }
-.manageUserForm .wrapper, .loginForm .wrapper {
+
+.form {
+    cursor:pointer;
+    height: 300px;
+    width: 300px;
+    position: relative;
+    box-shadow: 1px 1px 5px 1px #999;
+}
+.wrapper, .loginForm .wrapper {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
 
 .time {
     font-size: 10px;

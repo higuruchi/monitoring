@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['idm'] = $ret['idm'];
                 $_SESSION['userId'] = $ret['id'];
                 $_SESSION['accessRight'] = $ret['access_right'];
-                $_SERVER['studentId'] = $ret['student_id'];
+                $_SESSION['studentId'] = $ret['student_id'];
                 $retarr = [
                     'result' => 'success',
                     'name' => $_SESSION['name']

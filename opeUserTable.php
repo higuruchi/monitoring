@@ -182,6 +182,7 @@ class OpeUserTable extends OpeDB {
         }
     }
 
+    // ユーザ名の更新
     public function update_user($newName) {
         try {
             $this->getDbh()->beginTransaction();
@@ -214,6 +215,54 @@ class OpeUserTable extends OpeDB {
                 'error' => $e
             ];
             
+            return $retarr;
+        }
+    }
+
+    public function update_password($newPassword) {
+        if ($this->getStudentId() === '0X000' || $this->getPassword() === null || empty($newPassword)) {
+            $retarr = [
+                'result'=>'fail'
+            ];
+            return $retarr;
+        }
+        try {
+            $this->getDbh()->beginTransaction();
+
+            $sql = 'SELECT * FROM user WHERE student_id=:student_id AND password=:password';
+            $stmt = $this->getDbh()->prepare($sql);
+            $stmt->bindValue(':student_id', $this->getStudentId());
+            $pass = md5($this->getPassword());
+            $stmt->bindValue(':password', $pass);
+            $stmt->execute();
+            $ret = $stmt->fetch();
+
+            if($ret) {
+                $sql = 'UPDATE user SET password=:new_password WHERE student_id=:student_id';
+                $stmt = $this->getDbh()->prepare($sql);
+                $newPassword = md5($newPassword);
+                $stmt->bindValue(':new_password', $newPassword);
+                $stmt->bindValue(':student_id', $this->getStudentId());
+                $stmt->execute();
+                $this->getDbh()->commit();
+                $retarr = [
+                    'result'=>'success'
+                ];
+                return $retarr;
+            } else {
+                $this->getDbh()->rollBack();
+                $retarr = [
+                    'result'=>'fail',
+                    'detail'=>'errorPassword'
+                ];
+                return $retarr;
+            }
+        } catch(Exception $e) {
+            $this->getDbh()->rollBack();
+            $retarr = [
+                'result'=>'fail',
+                'detail'=>$e
+            ];
             return $retarr;
         }
     }

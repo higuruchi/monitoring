@@ -24,7 +24,5 @@ class signInSignOut extends OpeUserTable {
             return false;
         }
     }
-
-
 }
 ?>

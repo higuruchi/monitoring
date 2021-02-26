@@ -59,6 +59,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $retarr = $opeDB->update_log();
     
         echo json_encode($retarr);
+    } else if ($_POST['command'] === 'update_password') {
+        if ($_SESSION['login']) {
+            $password = $_POST['password'];
+            $newPassword = $_POST['newPassword'];
+
+            if (!empty($password) && !empty($newPassword)) {
+                // echo json_encode(['stuid'=>$_SESSION['studentId']]);
+                $opeUserTable = new OpeUserTable($_SESSION['studentId']);
+                $opeUserTable->setPassword($password);
+                echo json_encode($opeUserTable->update_password($newPassword));
+            }
+
+        } else {
+            $retarr = [
+                'result'=>'fail',
+                'detail'=>'you_are_not_logged_in'
+            ];
+            echo json_encode($retarr);
+        }
     }
 
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -71,8 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $to = urldecode($_GET['to']);
         $idm = $_GET['idm'] ?? '';
         $name = $_GET['name'] ?? '';
-        // echo json_encode(['a'=>'a']);
-        // exit();
 
         $opeLogTable = new OpeLogTable('0X000');
         echo json_encode($opeLogTable->search_log($idm, $name, $from, $to));
@@ -90,20 +107,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
 
-    } 
-    else if ($_GET['command'] === 'show_user') {
+    } else if ($_GET['command'] === 'show_user') {
         
-        if (check_login() === true) {
+        // if (check_login() === true) {
 
-            $opeDB = new OpeDB();
-            echo json_encode($opeDB->show_user(-1, '', ''));
+        //     $opeDB = new OpeDB();
+        //     echo json_encode($opeDB->show_user(-1, '', ''));
         
-        } else {
-            $retarr = [
-                'result' => 'fail'
-            ];
-            echo json_encode($retarr);
-        }
+        // } else {
+        //     $retarr = [
+        //         'result' => 'fail'
+        //     ];
+        //     echo json_encode($retarr);
+        // }
 
     }   
 }

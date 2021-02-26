@@ -5,12 +5,6 @@ class OpeDB {
 
     private $dbh;
 
-
-    // private $userId = -1;
-    // private $name = 'guest';
-    // private $idm = '0000000000000000';
-    // private $password = null;
-
     public function __construct() {
         $this->setDbh();
     }
@@ -29,9 +23,7 @@ class OpeDB {
     protected function getDbh() {
         return $this->dbh;
     }
-    // -------------------------------
-
-    
+    // -------------------------------  
     
 }
 
