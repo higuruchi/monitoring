@@ -23,23 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST['command'] === 'update_user') {
 
         if ($_SESSION['login']) {
-            $studentId = $_POST['studentId'];
+            $studentId = $_SESSION['studentId'];
             $newName = $_POST['newName'];
+            $password = $_POST['password'];
+
+            // echo json_encode(['stuid'=>$studentId, 'newname'=>$newName, 'pass'=>$password]);
+            // exit();
 
             $opeUserTable = new OpeUserTable($studentId);
-            if ($_SESSION['accessRight'] === true) {
-                $opeUserTable->setUserId($userId);
-                echo json_encode($opeUserTable->update_user($newName));
-            } else if ($_SESSION['studentId'] === $studentId) {
-               $opeDB->setUserId($studentId);
-               echo json_encode($opeUserTable->update_user($newName));
-            } else {
-                $retarr = [
-                    'result' => 'faile',
-                    'detail'=>'you do not have access right'
-                ];
-                echo json_encode($retarr);
-            }
+            $opeUserTable->setPassword($password);
+            echo json_encode($opeUserTable->update_user($newName));
+            
         } else {
             $retarr = [
                 'result' => 'faile'

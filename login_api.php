@@ -20,14 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ret = $signInSignOut->login();
             if ($ret !== false) {
                 $_SESSION['login'] = true;
-                $_SESSION['name'] = $ret['name'];
                 $_SESSION['idm'] = $ret['idm'];
                 $_SESSION['userId'] = $ret['id'];
                 $_SESSION['accessRight'] = $ret['access_right'];
                 $_SESSION['studentId'] = $ret['student_id'];
                 $retarr = [
                     'result' => 'success',
-                    'name' => $_SESSION['name']
+                    'name' => $ret['name']
+                ];
+            } else {
+                $retarr = [
+                    'result' => 'fail'
                 ];
             }
         } else {

@@ -199,12 +199,60 @@ jQuery(function($) {
         });
     }
 
+    function changeUserName() {
+        let passwordText = $('<input>').attr({
+            type: 'password',
+            name: 'password',
+            placeholder: 'パスワード'
+        });
+        let newUserNameText = $('<input>').attr({
+            type: 'text',
+            name: 'newName',
+            placeholder: '新しいユーザ名'
+        });
+        let button = $('<button>').text('変更');
+        let wrapper = $('<div>').addClass('wrapper');
+        let changeUserNameForm = $('<div>').addClass('changeUserNameForm');
+        
+        wrapper.append(passwordText).append(newUserNameText).append(button);
+        changeUserNameForm.append(wrapper);
+        $('.main').append(changeUserNameForm);
+
+        button.on('click', function() {
+            let password = $('input[name=password]').val();
+            let newUserName = $('input[name=newName]').val();
+
+            if (password !== '' && newUserName !== '') {
+                $.ajax({
+                    url: 'api.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        command: 'update_user',
+                        password: password,
+                        newName: newUserName,
+                    }
+                }).done(function(data) {
+                    if (data.result === 'success') {
+                        alert('変更しました');
+                        $('input[name=password]').val('');
+                        $('input[name=newName]').val('');
+                    } else {
+                        alert('失敗しました');
+                    }
+                })
+            } else {
+                alert('入力項目を確認してください');
+            }
+        });
+    }
+
     function manageUser() {
 
         let changePasswordForm = $('<div>').attr({name: 'changePassword'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('パスワード')).append('<i>').addClass('fas fa-key fa-2x'));
-        let changeUserNameForm = $('<div>').attr({nmae: 'changeUserName'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('ユーザ名')).append('<i>').addClass('fas fa-user-cog fa-2x'));
+        let changeUserNameForm = $('<div>').attr({name: 'changeUserName'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('ユーザ名')).append('<i>').addClass('fas fa-user-cog fa-2x'));
         let showUserForm = $('<div>').attr({name: 'showUser'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('ユーザ検索')).append('<i>').addClass('fas fa-users fa-2x'));
-        $('.main').append(changePasswordForm).append(changeUserNameForm).append(showUserForm);
+        $('.main').append(changePasswordForm).append(changeUserNameForm).append(showUserForm).css('display', 'flex');
 
         $('.form').on('click', function() {
             let command = $(this).attr('name');
@@ -257,6 +305,8 @@ jQuery(function($) {
         }
     });
 
+
+    // ログイン処理
     $('header div').on('click', function() {
         clearMain();
         let studentIdText = $('<input>').attr({
@@ -293,11 +343,10 @@ jQuery(function($) {
                     }
                 }).done(function(data) {
                     console.log(data);
-                    alert('ようこそ'+data.name+'さん');
                     $('aside nav ul li[name=home]').trigger('click');
-                    $('header div div i[name=logout]').show();
-                    $('header div div i[name=login]').hide();
-                    $('header div div span').text('ログアウト')
+                    $('header div i[name=login]').remove();
+                    $('header div').append($('<i>').addClass('fas fa-sign-out-alt fa-2x'));
+                    $('header div span').text('ログアウト');
                 }).fail(function() {
                     alert('ログインできませんでした');
                 })

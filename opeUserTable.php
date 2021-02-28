@@ -89,10 +89,14 @@ class OpeUserTable extends OpeDB {
                 $data[] = $this->getStudentId();
                 $column[] = 'student_id';
             }
+            if (true) {
+                $data[] = md5($this->getPassword());
+                $column[] = 'password';
+            }
 
             $sql .= $column[0].'=:'.$column[0];
             for ($i = 1; $i < count($column); $i++) {
-                $sql .= ' AND '.$column[0].'=:'.$column[0];
+                $sql .= ' AND '.$column[$i].'=:'.$column[$i];
             }
             $stmt = $this->getDbh()->prepare($sql);
             for($i = 0; $i < count($data); $i++) {
@@ -184,6 +188,7 @@ class OpeUserTable extends OpeDB {
 
     // ユーザ名の更新
     public function update_user($newName) {
+
         try {
             $this->getDbh()->beginTransaction();
             if ($this->check_user() === false || $newName === '') {
@@ -204,7 +209,7 @@ class OpeUserTable extends OpeDB {
             $this->getDbh()->commit();
 
             $retarr = [
-                'result' => 'success'
+                'result' => 'success',
             ];
             return $retarr;
 
