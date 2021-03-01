@@ -15,8 +15,8 @@
     <title>入退室管理システム</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
-    <script type="text/javascript" src="home.js?1"></script>
-    <link rel="stylesheet" type="text/css" href="home.css?9">
+    <script type="text/javascript" src="home.js?2"></script>
+    <link rel="stylesheet" type="text/css" href="home.css?10">
     <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Kosugi&display=swap" rel="stylesheet">
@@ -26,11 +26,6 @@
     <header>
         <h1>入退室管理システム</h1>
         <div name="login"><i class="fas fa-sign-out-alt fa-2x" name="login"></i><span>ログアウト</span></div>
-        <!-- <div>
-            <input type="text" name="search_condition" placeholder="検索条件">
-            <input type="datetime-local" name="from">~<input type="datetime-local" name="to">
-        </div>
-        <button class="search">検索</button> -->
     </header>
     
     <div class="middle">
@@ -42,6 +37,7 @@
                     <li name="manage_user">ユーザ管理</li>
                     <li name="statistics">統計情報</li>
                     <li name="now_use">現在入室している人</li>
+                    <li name="minutes">議事録</li>
                 </ul>
             </nav>
         </aside>

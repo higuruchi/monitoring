@@ -40,7 +40,7 @@ input[type="text"]:focus, input[type="password"]:focus {
 }
 button {
     display: inline-block;
-    max-width: 180px;
+    width: 200px;
     text-align: left;
     border: 2px solid #9ec34b;
     font-size: 16px;
@@ -50,6 +50,7 @@ button {
     padding: 8px 16px;
     border-radius: 4px;
     transition: .4s;
+    text-align: center;
 }
 button:hover {
     background-color: #9ec34b;

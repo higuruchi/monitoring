@@ -1,0 +1,58 @@
+body {
+    margin: 0px;
+    min-height: 100vh;
+    position: relative;
+}
+
+div.form {
+    width: 300px;
+    height: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 1px 1px 5px 1px #999;
+}
+div.wrapper {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+input[type="text"], input[type="password"] {
+    width: 200px; 
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 10px; 
+    border: 2px solid #ddd;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    border: 2px solid rgb(115, 115, 199); 
+    z-index: 10;
+    outline: 0;
+}
+button {
+    display: inline-block;
+    width: 200px;
+    text-align: left;
+    border: 2px solid #9ec34b;
+    font-size: 16px;
+    color: #9ec34b;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: .4s;
+    text-align: center;
+}
+button:hover {
+    background-color: #9ec34b;
+    border-color: #cbe585;
+    color: #FFF;
+
+}

@@ -4,6 +4,7 @@ jQuery(function($) {
         $('.main').html('');
     }
 
+    // ログ検索---------------------
     function searchLog() {
         let main = $('.main');
         let searchCondition = $('<input>').attr({
@@ -51,7 +52,7 @@ jQuery(function($) {
                 console.log(idm, name, from, to);
 
                 $.ajax({
-                    url : 'api.php',
+                    url : '../api.php',
                     type : 'GET',
                     dataType : 'json',
                     data : {
@@ -89,10 +90,12 @@ jQuery(function($) {
             }
         });
     }
+    // ----------------------
 
+    // ホーム画面------------------
     function home(date) {
         $.ajax({
-            url : 'api.php',
+            url : '../api.php',
             type : 'GET',
             dataType : 'json',
             data : {
@@ -148,7 +151,9 @@ jQuery(function($) {
             });
         });
     }
+    // ---------------------------
 
+    // パスワードの変更----------------
     function changePassword() {
         let passwordText = $('<input>').attr({
             type: 'password',
@@ -176,7 +181,7 @@ jQuery(function($) {
 
             if (password !== '' && newPassword !== '') {
                 $.ajax({
-                    url: 'api.php',
+                    url: '../api.php',
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -198,7 +203,9 @@ jQuery(function($) {
             }
         });
     }
+    // -------------------------------
 
+    // ユーザ名の変更処理----------------------
     function changeUserName() {
         let passwordText = $('<input>').attr({
             type: 'password',
@@ -224,7 +231,7 @@ jQuery(function($) {
 
             if (password !== '' && newUserName !== '') {
                 $.ajax({
-                    url: 'api.php',
+                    url: '../api.php',
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -246,13 +253,15 @@ jQuery(function($) {
             }
         });
     }
+    // --------------------------------------
 
+    // ユーザ管理の分岐処理------------------------
     function manageUser() {
-
         let changePasswordForm = $('<div>').attr({name: 'changePassword'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('パスワード')).append('<i>').addClass('fas fa-key fa-2x'));
         let changeUserNameForm = $('<div>').attr({name: 'changeUserName'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('ユーザ名')).append('<i>').addClass('fas fa-user-cog fa-2x'));
         let showUserForm = $('<div>').attr({name: 'showUser'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('ユーザ検索')).append('<i>').addClass('fas fa-users fa-2x'));
-        $('.main').append(changePasswordForm).append(changeUserNameForm).append(showUserForm).css('display', 'flex');
+        let mailForm = $('<div>').attr({name: 'mail'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('メールアドレス')).append('<i>').addClass('fas fa-envelope fa-2x'));
+        $('.main').append(changePasswordForm).append(changeUserNameForm).append(showUserForm).append(mailForm).css('display', 'flex').css('flex-wrap', 'wrap');
 
         $('.form').on('click', function() {
             let command = $(this).attr('name');
@@ -268,12 +277,16 @@ jQuery(function($) {
                 case 'showUser':
                     showUser();
                     break;
+                case 'mail':
+                    mail();
+                    break;
             }
         });
         
     }
+    // --------------------------------------
 
-    
+    // 最初に実行されるコード---------- 
     function formatDate(dt) {
         let year = dt.getFullYear();
         let month = ('00'+(dt.getMonth()+1)).slice(-2);
@@ -282,7 +295,9 @@ jQuery(function($) {
     }
     
     $(home(formatDate(new Date())));
-    
+    // -----------------------------
+
+    // サイドバーの分岐処理-----------------
     $('li').on('click', function() {
         let command = $(this).attr('name');
         console.log(command);
@@ -304,12 +319,13 @@ jQuery(function($) {
                 break;
         }
     });
+    // -------------------------------
 
 
-    // ログアウト処理
+    // ログアウト処理------------------------
     $('header div').on('click', function() {
         $.ajax({
-            url: './login_api.php',
+            url: '../login_api.php',
             type: 'POST',
             dataType: 'json',
             data: {
@@ -317,59 +333,9 @@ jQuery(function($) {
             }
         }).done(function(data) {
             if (data.result === 'success') {
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
             }
-        })
-        // clearMain();
-        // let studentIdText = $('<input>').attr({
-        //     type: 'text',
-        //     name: 'studentId',
-        //     placeholder: '学籍番号'
-        // });
-        // let passwordText = $('<input>').attr({
-        //     type: 'password',
-        //     name: 'password',
-        //     placeholder: 'パスワード'
-        // });
-        // let button = $('<button>').text('ログイン');
-        // let wrapper = $('<div>').addClass('wrapper');
-        // let loginForm = $('<div>').addClass('loginForm');
-        
-        // wrapper.append(studentIdText).append(passwordText).append(button);
-        // loginForm.append(wrapper);
-        // $('.main').append(loginForm);
-
-        // button.on('click', function() {
-        //     let studentId = $('input[name=studentId]').val();
-        //     let password = $('input[name=password]').val();
-
-        //     if (studentId !== '' && password !== '') {
-        //         $.ajax({
-        //             url: 'login_api.php',
-        //             type: 'POST',
-        //             dataType: 'json',
-        //             data: {
-        //                 command: 'login',
-        //                 studentId: studentId,
-        //                 password: password
-        //             }
-        //         }).done(function(data) {
-        //             console.log(data);
-
-        //             if (data.result === 'success') {
-        //                 $('aside nav ul li[name=home]').trigger('click');
-        //                 $('header div i[name=login]').remove();
-        //                 $('header div').append($('<i>').addClass('fas fa-sign-out-alt fa-2x'));
-        //                 $('header div span').text('ログアウト');
-        //             } else if (data.result === 'fail') {
-        //                 alert('ログインに失敗しました');
-        //             }
-        //         }).fail(function() {
-        //             alert('ログインできませんでした');
-        //         })
-        //     } else {
-        //         alert('学籍番号とパスワードを入力してください');
-        //     }
-        // })
-    })
+        });
+    });
+    // -------------------------------------
 });
