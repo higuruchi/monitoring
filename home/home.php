@@ -37,6 +37,7 @@
                     <li name="manage_user">ユーザ管理</li>
                     <li name="statistics">統計情報</li>
                     <li name="now_use">現在入室している人</li>
+                    <li name="minutes">議事録</li>
                 </ul>
             </nav>
         </aside>
