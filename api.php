@@ -8,12 +8,12 @@ require_once('./back/opeLogTable.php');
 session_start();
 session_regenerate_id();
 
-function check_login() {
-    if ($_SESSION['login'] === true) {
-        return true;
-    } else {
-        return false;
-    }
+if (!$_SESSION['login'] && $_POST['command'] !== 'update_log') {
+    $retarr = [
+        'result'=>'fail'
+    ];
+    echo json_encode($retarr);
+    exit();
 }
 
 // 送られてくるデータによって処理を分岐する
@@ -26,9 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $studentId = $_SESSION['studentId'];
             $newName = $_POST['newName'];
             $password = $_POST['password'];
-
-            // echo json_encode(['stuid'=>$studentId, 'newname'=>$newName, 'pass'=>$password]);
-            // exit();
 
             $opeUserTable = new OpeUserTable($studentId);
             $opeUserTable->setPassword($password);
@@ -54,23 +51,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
         echo json_encode($retarr);
     } else if ($_POST['command'] === 'update_password') {
-        if ($_SESSION['login']) {
-            $password = $_POST['password'];
-            $newPassword = $_POST['newPassword'];
+        
+        $password = $_POST['password'];
+        $newPassword = $_POST['newPassword'];
 
-            if (!empty($password) && !empty($newPassword)) {
-                // echo json_encode(['stuid'=>$_SESSION['studentId']]);
-                $opeUserTable = new OpeUserTable($_SESSION['studentId']);
-                $opeUserTable->setPassword($password);
-                echo json_encode($opeUserTable->update_password($newPassword));
-            }
-
+        if (!empty($password) && !empty($newPassword)) {
+            $opeUserTable = new OpeUserTable($_SESSION['studentId']);
+            $opeUserTable->setPassword($password);
+            echo json_encode($opeUserTable->update_password($newPassword));
         } else {
             $retarr = [
-                'result'=>'fail',
-                'detail'=>'you_are_not_logged_in'
+                'result' => 'faile'
             ];
             echo json_encode($retarr);
+        }
+    } else if ($_POST['command'] === 'update_mail') {
+        $password = $_POST['password'];
+        $mail = $_POST['mail'];
+
+        if (preg_match('/^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/', $mail) && !empty($password)) {
+            $opeUserTable = new OpeUserTable($_SESSION['studentId']);
+            $opeUserTable->setPassword($password);
+            echo json_encode($opeUserTable->update_mail($mail));
         }
     }
 
@@ -90,16 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } else if ($_GET['command'] === 'use_now') {
 
-        if (check_login() === true) {
-            $opeLogTable = new OpeLogTable('00X000');
-            echo json_encode($opeLogTable->use_now());
-        }  else {
-            $retarr = [
-                'result' => 'fail'
-            ];
-            echo json_encode($retarr);
-        }
-
+        
+        $opeLogTable = new OpeLogTable('00X000');
+        echo json_encode($opeLogTable->use_now());
 
     } else if ($_GET['command'] === 'show_user') {
         

@@ -14,19 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['password'] ?? '';
 
         if ($studentId !== '' && $password !== '') {
-            // $signInSignOut = new signInSignOut($studentId);
-            // $signInSignOut->setPassword($password);
-            // $ret = $signInSignOut->login();
 
             $opeUserTable = new OpeUserTable($studentId);
             $opeUserTable->setPassword($password);
             $ret = $opeUserTable->check_user();
             if ($ret !== false) {
                 $_SESSION['login'] = true;
-                $_SESSION['idm'] = $ret['idm'];
-                $_SESSION['userId'] = $ret['id'];
-                $_SESSION['accessRight'] = $ret['access_right'];
-                $_SESSION['studentId'] = $ret['student_id'];
+                $_SESSION['idm'] = $ret[0]['idm'];
+                $_SESSION['userId'] = $ret[0]['id'];
+                $_SESSION['accessRight'] = $ret[0]['access_right'];
+                $_SESSION['studentId'] = $ret[0]['student_id'];
                 $retarr = [
                     'result' => 'success',
                     'name' => $ret[0]['name']

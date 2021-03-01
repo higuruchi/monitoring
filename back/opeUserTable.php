@@ -9,6 +9,7 @@ class OpeUserTable extends OpeDB {
     private $name = 'guest';
     private $idm = '0000000000000000';
     private $password = null;
+    private $mail;
 
     public function __construct($studentId) {
         parent::__construct();
@@ -61,6 +62,15 @@ class OpeUserTable extends OpeDB {
         return $this->studentId;
     }
     // -------------------------------------------
+
+    // メールアドレスのセッター、ゲッター------------
+    public function setMail(string $mail) {
+        $this->mail = $mail;
+    }
+    public function getMail() {
+        return $this->mail;
+    }
+    // 
 
     // 任意のユーザがいるかどうか調べる----------------
     public function check_user() {
@@ -192,11 +202,11 @@ class OpeUserTable extends OpeDB {
         try {
             $this->getDbh()->beginTransaction();
             if ($this->check_user() === false || $newName === '') {
+                $this->getDbh()->rollBack();
                 $retarr = [
                     'result' => 'fail'
                 ];
-                echo json_encode($retarr);
-                exit();
+                return $retarr;
             }
 
             $sql = 'UPDATE user '.
@@ -234,13 +244,7 @@ class OpeUserTable extends OpeDB {
         try {
             $this->getDbh()->beginTransaction();
 
-            $sql = 'SELECT * FROM user WHERE student_id=:student_id AND password=:password';
-            $stmt = $this->getDbh()->prepare($sql);
-            $stmt->bindValue(':student_id', $this->getStudentId());
-            $pass = md5($this->getPassword());
-            $stmt->bindValue(':password', $pass);
-            $stmt->execute();
-            $ret = $stmt->fetch();
+            $ret = $this->check_user();
 
             if($ret) {
                 $sql = 'UPDATE user SET password=:new_password WHERE student_id=:student_id';
@@ -263,6 +267,46 @@ class OpeUserTable extends OpeDB {
                 return $retarr;
             }
         } catch(Exception $e) {
+            $this->getDbh()->rollBack();
+            $retarr = [
+                'result'=>'fail',
+                'detail'=>$e
+            ];
+            return $retarr;
+        }
+    }
+
+    // メールアドレスの更新
+    public function update_mail($newMail) {
+        if ($this->getStudentId() === '0X000' || $this->getPassword() === null || !preg_match('/^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/', $newMail)) {
+            $retarr = [
+                'result'=>'fail'
+            ];
+            return $retarr;
+        }
+        try {
+            $this->getDbh()->beginTransaction();
+            $ret = $this->check_user();
+            if ($ret) {
+                $sql = 'UPDATE user SET mail=:mail WHERE student_id=:student_id';
+                $stmt = $this->getDbh()->prepare($sql);
+                $stmt->bindValue(':mail', $newMail);
+                $stmt->bindValue(':student_id', $this->getStudentId());
+                $stmt->execute();
+                $this->getDbh()->commit();
+                $retarr = [
+                    'result'=>'success'
+                ];
+                return $retarr;
+            } else {
+                $this->getDbh()->rollBack();
+                $retarr = [
+                    'result'=>'fail',
+                    'detail'=>'errorPassword'
+                ];
+                return $retarr;
+            }
+        }catch(Exception $e) {
             $this->getDbh()->rollBack();
             $retarr = [
                 'result'=>'fail',

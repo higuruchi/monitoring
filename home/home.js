@@ -177,8 +177,6 @@ jQuery(function($) {
             let password = $('input[name=password]').val();
             let newPassword = $('input[name=newPassword]').val();
 
-            console.log(newPassword);
-
             if (password !== '' && newPassword !== '') {
                 $.ajax({
                     url: '../api.php',
@@ -254,6 +252,48 @@ jQuery(function($) {
         });
     }
     // --------------------------------------
+
+    // メールアドレスの変更----------------
+    function mail() {
+        let passwordText = $('<input>').attr({
+            type: 'password',
+            name: 'password',
+            placeholder: 'パスワード'
+        });
+        let mailText = $('<input>').attr({
+            type: 'email',
+            name: 'mail',
+            placeholder: 'メールアドレス'
+        });
+        let button = $('<button>').text('変更');
+        let wrapper = $('<div>').addClass('wrapper');
+        let mailForm = $('<div>').addClass('mailForm');
+        
+        wrapper.append(passwordText).append(mailText).append(button);
+        mailForm.append(wrapper);
+        $('.main').append(mailForm);
+
+        button.on('click', function() {
+            let mail = $('input[name=mail]').val();
+            let password = $('input[name=password]').val();
+
+            if (password !== '' && mail.match(/^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/) !== null) {
+                $.ajax({
+                    url: '../api.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        command: 'update_mail',
+                        password: password,
+                        mail: mail,
+                    }
+                }).done(function(done) {
+                    console.log(done);
+                })
+            }
+        })
+    }
+    // ---------------------------------
 
     // ユーザ管理の分岐処理------------------------
     function manageUser() {
