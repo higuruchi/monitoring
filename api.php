@@ -1,9 +1,9 @@
 <?php
 
-require_once('common.php');
-// require_once('opeDB.php');
-require_once('opeUserTable.php');
-require_once('opeLogTable.php');
+require_once('./back/common.php');
+require_once('./back/opeDB.php');
+require_once('./back/opeUserTable.php');
+require_once('./back/opeLogTable.php');
 
 session_start();
 session_regenerate_id();

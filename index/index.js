@@ -16,7 +16,7 @@ jQuery(function($) {
             }).done(function(data) {
                 if (data.result === 'success') {
                     console.log('ok');
-                    window.location.href = 'home.php';
+                    window.location.href = './home/home.php';
                 } else {
                     alert('パスワードもしくは学籍番号が間違っています');
                 }

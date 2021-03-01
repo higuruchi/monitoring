@@ -2,9 +2,9 @@
 
 session_start();
 
-require_once('opeDB.php');
-require_once('common.php');
-require_once('opeUserTable.php');
+require_once('./back/opeDB.php');
+require_once('./back/common.php');
+require_once('./back/opeUserTable.php');
 
 header('Content-Type: application/json; charset=UTF-8');
 

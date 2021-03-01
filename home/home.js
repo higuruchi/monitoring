@@ -51,7 +51,7 @@ jQuery(function($) {
                 console.log(idm, name, from, to);
 
                 $.ajax({
-                    url : 'api.php',
+                    url : '../api.php',
                     type : 'GET',
                     dataType : 'json',
                     data : {
@@ -92,7 +92,7 @@ jQuery(function($) {
 
     function home(date) {
         $.ajax({
-            url : 'api.php',
+            url : '../api.php',
             type : 'GET',
             dataType : 'json',
             data : {
@@ -176,7 +176,7 @@ jQuery(function($) {
 
             if (password !== '' && newPassword !== '') {
                 $.ajax({
-                    url: 'api.php',
+                    url: '../api.php',
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -224,7 +224,7 @@ jQuery(function($) {
 
             if (password !== '' && newUserName !== '') {
                 $.ajax({
-                    url: 'api.php',
+                    url: '../api.php',
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -309,7 +309,7 @@ jQuery(function($) {
     // ログアウト処理
     $('header div').on('click', function() {
         $.ajax({
-            url: './login_api.php',
+            url: '../login_api.php',
             type: 'POST',
             dataType: 'json',
             data: {
@@ -317,7 +317,7 @@ jQuery(function($) {
             }
         }).done(function(data) {
             if (data.result === 'success') {
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
             }
         })
         // clearMain();
