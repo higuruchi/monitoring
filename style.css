@@ -76,7 +76,7 @@ input[type="datetime-local"] {
 
 .passwordForm, .loginForm, .changeUserNameForm {
     height: 300px;
-    width: 300px;
+    width: 25vw;
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -90,7 +90,7 @@ input[type="datetime-local"] {
 .form {
     cursor:pointer;
     height: 300px;
-    width: 300px;
+    width: 25vw;
     position: relative;
     box-shadow: 1px 1px 5px 1px #999;
 }

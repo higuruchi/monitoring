@@ -343,10 +343,15 @@ jQuery(function($) {
                     }
                 }).done(function(data) {
                     console.log(data);
-                    $('aside nav ul li[name=home]').trigger('click');
-                    $('header div i[name=login]').remove();
-                    $('header div').append($('<i>').addClass('fas fa-sign-out-alt fa-2x'));
-                    $('header div span').text('ログアウト');
+
+                    if (data.result === 'success') {
+                        $('aside nav ul li[name=home]').trigger('click');
+                        $('header div i[name=login]').remove();
+                        $('header div').append($('<i>').addClass('fas fa-sign-out-alt fa-2x'));
+                        $('header div span').text('ログアウト');
+                    } else if (data.result === 'fail') {
+                        alert('ログインに失敗しました');
+                    }
                 }).fail(function() {
                     alert('ログインできませんでした');
                 })

@@ -89,7 +89,7 @@ class OpeUserTable extends OpeDB {
                 $data[] = $this->getStudentId();
                 $column[] = 'student_id';
             }
-            if (true) {
+            if ($this->getPassword() !== '00X000') {
                 $data[] = md5($this->getPassword());
                 $column[] = 'password';
             }

@@ -1,10 +1,10 @@
 <?php
 
 require_once('common.php');
-require_once('opeDB.php');
+// require_once('opeDB.php');
 require_once('opeUserTable.php');
 require_once('opeLogTable.php');
-require_once('signInsignOut.php');
+
 session_start();
 session_regenerate_id();
 
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $opeLogTable = new OpeLogTable($studentId);
         $opeLogTable->setIdm($idm);
         $opeLogTable->setName($name);
-        $retarr = $opeDB->update_log();
+        $retarr = $opeLogTable->update_log();
     
         echo json_encode($retarr);
     } else if ($_POST['command'] === 'update_password') {
