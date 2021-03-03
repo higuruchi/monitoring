@@ -21,7 +21,7 @@ jQuery(function($) {
             name: 'to'
         });
         let button = $('<button>').addClass('search').text('検索');
-        let div = $('<div>').append(searchCondition).append(from).append('~').append(to).append(button);
+        let div = $('<div>').append(searchCondition).append(from).append('~').append(to).append(button).append('<ul>');
         main.append(div);
 
         button.on('click', function() {
@@ -65,17 +65,14 @@ jQuery(function($) {
                 }).done(function(data) {
 
                     if (data.log) {
-                        let main = $('.main'); 
-                        let ul = $('<ul>');
-                        data.log.forEach(function(element) {
+                        $('.main div ul').html('');
+                        $('.main div ul').append(data.log.map(function(value) {
                             let li = $('<li>');
-                            let time = $('<div>').addClass('time').text(element.enter_time+'~'+element.exit_time);
-                            let name = $('<div>').addClass('name').text(element.name);
+                            let time = $('<div>').addClass('time').text(value.enter_time+'~'+value.exit_time);
+                            let name = $('<div>').addClass('name').text(value.name);
         
-                            li.append(time).append(name);
-                            ul.append(li);
-                        });
-                        main.append(ul);
+                            return li.append(time).append(name);
+                        }));
 
                     } else {
                         let li = $('<li></li>').text('検索に一致するログが見つかりませんでした');
@@ -294,6 +291,46 @@ jQuery(function($) {
         })
     }
     // ---------------------------------
+
+    function showUser() {
+        let nameText = $('<input>').attr({
+            type: 'text',
+            placeholder: '名前',
+            name: 'name'
+        });
+        let studentIdText = $('<input>').attr({
+            type: 'text', 
+            placeholder: '学籍番号',
+            name: 'studentId'
+        });
+        let idmText = $('<input>').attr({
+            type: 'text',
+            placeholder: '学籍番号',
+            name: 'idm'
+        });
+        let button = $('<button>').append('検索');
+        $('.main').append($('<div>').append(nameText).append(studentIdText).append(idmText).append(button).append('<ul>'));
+
+        button.on ('click', function() {
+            $.ajax({
+                url: '../api.php',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    command: 'show_user',
+                    name: nameText.val(),
+                    studentId: studentIdText.val(),
+                    idm: idmText.val()
+                }
+            }).done(function(data) {
+                $('.main div ul').html('');
+                $('.main div ul').append(data.detail.map(function(value) {
+                    return $('<li>').append($('<div>').text(value.student_id)).append($('<div>').text(value.mail)).append($('<div>').text(value.name));
+                }));
+                $('.main div').append(ul);
+            })
+        });
+    }
 
     // ユーザ管理の分岐処理------------------------
     function manageUser() {

@@ -143,17 +143,14 @@ class OpeUserTable extends OpeDB {
 
     // ユーザの参照--------------------------------------------------------
     public function show_user() {
+
         try {
-            $sql = 'SELECT id, idm, name, student_id FROM user ';
+            $sql = 'SELECT idm, name, student_id, mail FROM user ';
             $data = array();
             $column = array();
             if ($this->getName() !== 'guest') {
                 $data[] = $this->getName();
                 $column[] = 'name';
-            }
-            if ($this->getUserId() !== -1) {
-                $data[] = $this->getUserId();
-                $column[] = 'id';
             }
             if ($this->getIdm() !== '0000000000000000') {
                 $data[] = $this->getIdm();
@@ -165,16 +162,17 @@ class OpeUserTable extends OpeDB {
             }
 
             if (count($data) > 0) {
-                $sql .= 'WHERE ';
-                $sql .= $column[0].'=:'.$column[0];
+                $sql = $sql.'WHERE ';
+                $sql = $sql.$column[0].'=:'.$column[0];
                 for ($i = 1; $i < count($column); $i++) {
-                    $sql .= 'AND '.$column[$i].'=:'.$column[$i];
+                    $sql = $sql.'AND '.$column[$i].'=:'.$column[$i];
                 }
 
                 $stmt = $this->getDbh()->prepare($sql);
-                for ($i = 0; $i = count($data); $i++) {
+                for ($i = 0; $i < count($data); $i++) {
                     $stmt->bindValue(':'.$column[$i], $data[$i]);
                 }
+
             } else {
                 $stmt = $this->getDbh()->prepare($sql);
             }
@@ -234,6 +232,7 @@ class OpeUserTable extends OpeDB {
         }
     }
 
+    // パスワードの変更
     public function update_password($newPassword) {
         if ($this->getStudentId() === '0X000' || $this->getPassword() === null || empty($newPassword)) {
             $retarr = [

@@ -91,25 +91,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode($opeLogTable->search_log($idm, $name, $from, $to));
 
     } else if ($_GET['command'] === 'use_now') {
-
-        
+      
         $opeLogTable = new OpeLogTable('00X000');
         echo json_encode($opeLogTable->use_now());
 
     } else if ($_GET['command'] === 'show_user') {
         
-        // if (check_login() === true) {
+        $idm = $_GET['idm'] ?? '';
+        $name = $_GET['name'] ?? '';
+        $studentId = $_GET['studentId'] ?? '';
 
-        //     $opeDB = new OpeDB();
-        //     echo json_encode($opeDB->show_user(-1, '', ''));
-        
-        // } else {
-        //     $retarr = [
-        //         'result' => 'fail'
-        //     ];
-        //     echo json_encode($retarr);
-        // }
-
+        // echo json_encode(['idm'=>$idm, 'name'=>$name, 'studentId'=>$studentId]);
+        // exit();
+        $opeUserTable = new OpeUserTable('00X000');
+        if ($idm !== '') {
+            $opeUserTable->setIdm($idm);
+        }
+        if ($name !== '') {
+            $opeUserTable->setName($name);
+        }
+        if ($studentId !== '') {
+            $opeUserTable->setStudentId($studentId);
+        }
+        echo json_encode($opeUserTable->show_user());
     }   
 }
 
