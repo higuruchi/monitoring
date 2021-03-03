@@ -118,6 +118,7 @@ class OpeLogTable extends OpeUserTable {
 
     // 現在利用している利用者のデータを取ってくる----------------------
     public function use_now() {
+
         try {
             $sql = 'SELECT user.name, log.enter_time '.
                     'FROM log '.
@@ -128,7 +129,19 @@ class OpeLogTable extends OpeUserTable {
             $stmt = $this->getDbh()->query($sql);
             $ret = $stmt->fetchAll();
             
-            return $ret;
+            if ($ret) {
+                $retarr = [
+                    'result'=>'success',
+                    'detail'=>$ret
+                ];
+                return $retarr;
+            } else {
+                $retarr = [
+                    'result'=>'success',
+                    'detail'=>'nothing'
+                ];
+                return $retarr;
+            }
         }catch(Exception $e) {
             return $e;
         }

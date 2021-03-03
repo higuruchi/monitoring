@@ -15,7 +15,7 @@
     <title>入退室管理システム</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
-    <script type="text/javascript" src="home.js?7"></script>
+    <script type="text/javascript" src="home.js?9"></script>
     <link rel="stylesheet" type="text/css" href="home.css?1">
     <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">

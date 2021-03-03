@@ -75,8 +75,8 @@ jQuery(function($) {
                         }));
 
                     } else {
-                        let li = $('<li></li>').text('検索に一致するログが見つかりませんでした');
-                        ul.append(li);
+                        let li = $('<li>').text('検索に一致するログが見つかりませんでした');
+                        $('.main div ul').append(li);
                     }
                 }).fail(function(data) {
                     alert('通信に失敗しました');
@@ -332,6 +332,32 @@ jQuery(function($) {
         });
     }
 
+    function nowUse() {
+        $.ajax({
+            url: '../api.php',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                command: 'use_now',
+            }
+        }).done(function(data) {
+            $('.main').append($('<div>').append('<ul>'));
+            if (data.detail !== 'nothing') {
+                $('.main div ul').html('');
+                $('.main div ul').append(data.detail.map(function(value) {
+                    let li = $('<li>');
+                    let time = $('<div>').addClass('time').text(value.enter_time);
+                    let name = $('<div>').addClass('name').text(value.name);
+                    return li.append(time).append(name);
+                }));
+
+            } else {
+                let li = $('<li>').text('現在利用しているユーザは存在しません');
+                $('.main div ul').append(li);
+            }
+        })
+    }
+
     // ユーザ管理の分岐処理------------------------
     function manageUser() {
         let changePasswordForm = $('<div>').attr({name: 'changePassword'}).addClass('form').append($('<div>').addClass('wrapper').append($('<div>').text('パスワード')).append('<i>').addClass('fas fa-key fa-2x'));
@@ -375,24 +401,24 @@ jQuery(function($) {
     // -----------------------------
 
     // サイドバーの分岐処理-----------------
-    $('li').on('click', function() {
+    $('aside li').on('click', function() {
         let command = $(this).attr('name');
         console.log(command);
-    
+        clearMain();
         switch (command) {
             case 'home':
-                clearMain();
                 home(formatDate(new Date()));
                 break;
             case 'search_log':
-                clearMain();
                 searchLog();
                 break;
             case 'manage_user':
-                clearMain();
                 manageUser();
                 break;
             case 'statistics':
+                break;
+            case 'now_use':
+                nowUse();
                 break;
         }
     });
