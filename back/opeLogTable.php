@@ -9,18 +9,14 @@ class OpeLogTable extends OpeUserTable {
 
         try {
 
-            $this->getDbh()->beginTransaction();
+            // $this->getDbh()->beginTransaction();
 
             if ($this->check_user() === false) {
-                if (!$this->add_user()) {
-                    $this->getDbh()->rollBack();
-                    return false;
-                }
+                $this->add_user();
             }
-
             $sql = 'SELECT * '.
-                    'FROM log INNER JOIN user '.
-                    'ON log.user_id=user.id '.
+                    'FROM user INNER JOIN log '.
+                    'ON user.id=log.user_id '.
                     'WHERE exit_time IS NULL '.
                     'AND enter_time >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY) '.
                     'AND user.idm=:idm '.
@@ -33,14 +29,14 @@ class OpeLogTable extends OpeUserTable {
 
             if ($ret) {
                 // 退出する
-
+                $user_id = $this->check_user()[0]['id'];
                 $sql = 'UPDATE log '.
                         'SET exit_time=CURRENT_TIMESTAMP '.
                         'WHERE exit_time IS NULL '.
-                        'AND user_id=:idm '.
+                        'AND user_id=:user_id '.
                         'ORDER BY enter_time DESC LIMIT 1';
                 $stmt = $this->getDbh()->prepare($sql);
-                $stmt->bindValue(':idm', $this->getIdm());
+                $stmt->bindValue(':user_id', $user_id);
                 $stmt->execute();
 
                 $retarr = [
@@ -49,7 +45,7 @@ class OpeLogTable extends OpeUserTable {
             } else {
                 // 新しく入室
 
-                $user_id = $this->check_user();
+                $user_id = $this->check_user()[0]['id'];
 
                 $sql = 'INSERT INTO log (user_id) VALUES (:user_id)';
                 $stmt = $this->getDbh()->prepare($sql);
@@ -60,14 +56,15 @@ class OpeLogTable extends OpeUserTable {
                     'result' => 'in'
                 ];
             }
-            $this->getDbh()->commit();
+            // $this->getDbh()->commit();
             return $retarr;
 
         } catch(Exception $e) {
-            $this->getDbh()->rollBack();
+            // $this->getDbh()->rollBack();
 
             $retarr =  [
-                'result' => $e
+                'result' => 'fail',
+                'detail'=>$e
             ];
             return $retarr;
         }

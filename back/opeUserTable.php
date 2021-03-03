@@ -74,6 +74,8 @@ class OpeUserTable extends OpeDB {
 
     // 任意のユーザがいるかどうか調べる----------------
     public function check_user() {
+        // return ['idm'=> $this->getIdm(), 'studentId'=>$this->getStudentId(), 'name'=>$this->getName()];
+        // exit();
 
         if ($this->getUserId() === -1 && $this->getName() === 'guest' && $this->getIdm() === '0000000000000000' && $this->getStudentId() === '00X000') {
             return false;
@@ -99,7 +101,7 @@ class OpeUserTable extends OpeDB {
                 $data[] = $this->getStudentId();
                 $column[] = 'student_id';
             }
-            if ($this->getPassword() !== '00X000') {
+            if ($this->getPassword() !== null) {
                 $data[] = md5($this->getPassword());
                 $column[] = 'password';
             }
@@ -108,6 +110,7 @@ class OpeUserTable extends OpeDB {
             for ($i = 1; $i < count($column); $i++) {
                 $sql .= ' AND '.$column[$i].'=:'.$column[$i];
             }
+
             $stmt = $this->getDbh()->prepare($sql);
             for($i = 0; $i < count($data); $i++) {
                 $stmt->bindValue(':'.$column[$i], $data[$i]);
@@ -129,12 +132,13 @@ class OpeUserTable extends OpeDB {
         if ($this->getIdm() === '0000000000000000') {
             return false;
         } else if ($this->check_user() === false) {
-            $sql = 'INSERT INTO user (idm, name, password) VALUES (:idm, :name, :password)';
+            $sql = 'INSERT INTO user (idm, name, password, student_id) VALUES (:idm, :name, :password, :student_id)';
             $stmt = $this->getDbh()->prepare($sql);
             $stmt->bindValue(':idm', $this->getIdm());
             $stmt->bindValue(':name', $this->getName());
-            $password = md5($this->getPassword());
+            $password = md5('password');
             $stmt->bindValue(':password', $password);
+            $stmt->bindValue(':student_id', $this->getStudentId());
             $stmt->execute();
             return true;
         }

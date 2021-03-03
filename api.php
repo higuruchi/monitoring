@@ -8,7 +8,7 @@ require_once('./back/opeLogTable.php');
 session_start();
 session_regenerate_id();
 
-if (!$_SESSION['login'] && $_POST['command'] !== 'update_log') {
+if (!$_SESSION['login']) {
     $retarr = [
         'result'=>'fail'
     ];
@@ -37,19 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
             echo json_encode($retarr);
         }
-    } else if ($_POST['command'] === 'update_log'){
-        $arr = json_decode(file_get_contents('php://input'), true);
-
-        $idm = $arr['idm'] ?? '0000000000000000';
-        $name = $arr['name'] ?? 'guest';
-        $studentId = $arr['studentId'] ?? '00X000';
-            
-        $opeLogTable = new OpeLogTable($studentId);
-        $opeLogTable->setIdm($idm);
-        $opeLogTable->setName($name);
-        $retarr = $opeLogTable->update_log();
-    
-        echo json_encode($retarr);
     } else if ($_POST['command'] === 'update_password') {
         
         $password = $_POST['password'];
@@ -101,8 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = $_GET['name'] ?? '';
         $studentId = $_GET['studentId'] ?? '';
 
-        // echo json_encode(['idm'=>$idm, 'name'=>$name, 'studentId'=>$studentId]);
-        // exit();
         $opeUserTable = new OpeUserTable('00X000');
         if ($idm !== '') {
             $opeUserTable->setIdm($idm);
