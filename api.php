@@ -19,7 +19,7 @@ function connectDB(string $dsn, string $user, string $password) {
 function use_now() {
 
     try {
-        $dbh = connectDB('mysql:dbname=monitoring;host=localhost;charset=utf8', 'root', 'Fumiya_0324');
+        $dbh = connectDB('mysql:dbname=monitoring;host=localhost;charset=utf8', 'USERNAME', 'PASSWORD');
         $sql = 'SELECT user.name, log.enter_time '.
                 'FROM log '.
                 'INNER JOIN user ON log.user_id=user.id '.
@@ -143,7 +143,7 @@ function search_log(string $idm, string $name, string $from, string $to) {
     }
 
     try {
-        $dbh = connectDB('mysql:dbname=monitoring;host=localhost;charset=utf8', 'root', 'Fumiya_0324');
+        $dbh = connectDB('mysql:dbname=monitoring;host=localhost;charset=utf8', 'USERNAME', 'PASSWORD');
         $stmt = $dbh->prepare($sql);
         $stmt->execute($data);
 
@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     try {
-        $dbh = connectDB('mysql:dbname=monitoring;host=localhost;charset=utf8', 'root', 'Fumiya_0324');
+        $dbh = connectDB('mysql:dbname=monitoring;host=localhost;charset=utf8', 'USERNAME', 'PASSWORD');
         $dbh->beginTransaction();
         
         $retarr = update_log($dbh, $idm, $name);
@@ -199,13 +199,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(search_log($idm, $name, $from, $to));
 
     } else if ($_GET['command'] === 'use_now') {
-        // $now = new DateTime();
-        // $to = $now->format('Y-m-d H:i:s');
-        // $now->sub(new DateInterval('P1D'));
-        // $from = $now->format('Y-m-d H:i:s');
-
-        // echo json_encode(search_log('', '', $from, $to));
-        
         echo json_encode(use_now());
     }
 }
